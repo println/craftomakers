@@ -1,0 +1,25 @@
+:root {
+  --bg: 255, 255, 255;
+  --bg-raised: 245, 246, 250;
+  --bg-deep: 26, 38, 54;
+  --text: 26, 38, 54;
+  --ink: 26, 38, 54;
+  --text-inverse: 255, 255, 255;
+  --muted: 52, 66, 86;
+  --primary: 26, 38, 54;
+  --primary-deep: 15, 24, 36;
+  --secondary: 134, 171, 216;
+  --secondary-soft: 134, 171, 216;
+  --secondary-deep: 47, 95, 158;
+  --start: 242, 169, 59;
+  --done: 62, 214, 152;
+  --cycle-craft: 124, 77, 219;
+  --cycle-result: 37, 99, 235;
+  --cycle-evaluation: 220, 38, 38;
+  --line: 26, 38, 54;
+  --gradient: rgb(var(--primary));
+  --radius: 1rem;
+  --radius-small: 0.625rem;
+  --font-body: "Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-accent: "Montserrat", "Inter", system-ui, sans-serif;
+}

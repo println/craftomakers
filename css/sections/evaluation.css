@@ -1,0 +1,37 @@
+.evaluation-inner {
+  display: grid;
+  gap: 2.5rem 2rem;
+}
+
+.evaluation-agent {
+  width: auto;
+  height: 12rem;
+  margin: 1.5rem auto 0;
+}
+
+.evaluation-form {
+  display: grid;
+  gap: 1.25rem;
+  align-content: start;
+  padding: 1.5rem;
+  border: 1px solid rgba(var(--line), 0.2);
+  border-radius: var(--radius);
+  background: rgba(var(--line), 0.05);
+}
+
+@media (min-width: 64rem) {
+  .evaluation-inner {
+    grid-template-columns: minmax(0, 0.8fr) minmax(0, 1fr);
+    gap: clamp(2.5rem, 6vw, 5rem) 3rem;
+    align-items: center;
+  }
+
+  .evaluation-agent {
+    height: 13.5rem;
+    margin-inline: 4rem auto;
+  }
+
+  .evaluation-form {
+    padding: 2rem;
+  }
+}

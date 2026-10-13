@@ -1,0 +1,78 @@
+.cases-inner {
+  display: grid;
+  gap: 2.5rem;
+}
+
+.cases-list {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1rem;
+}
+
+.cases-card {
+  display: grid;
+  align-content: end;
+  min-height: 9rem;
+  padding: 1.25rem 1.5rem;
+  background: repeating-linear-gradient(-45deg, var(--stripes));
+  color: rgb(var(--tag-text));
+}
+
+.cases-card {
+  position: relative;
+}
+
+.cases-card-teia {
+  --stripes: #304B2A 0rem 1rem, #F36928 1rem 2rem, #3A638C 2rem 3rem, #E87A5D 3rem 4rem, #8B9A82 4rem 5rem, #E3D8C8 5rem 6rem;
+  --tag: 247, 249, 245;
+  --tag-text: 48, 75, 42;
+}
+
+.cases-card-orvanno {
+  --stripes: #453422 0rem 1rem, #BB936A 1rem 2rem, #D8C7AA 2rem 3rem, #76665A 3rem 4rem, #F5F1EA 4rem 5rem, #262623 5rem 6rem;
+  --tag: 245, 241, 234;
+  --tag-text: 69, 52, 34;
+}
+
+.cases-card-forja {
+  --stripes: #E8FF1A 0rem 1rem, #0B0B0B 1rem 2rem, #FF6A13 2rem 3rem, #C2410C 3rem 4rem, #F4F1EA 4rem 5rem;
+  --tag: 11, 11, 11;
+  --tag-text: 232, 255, 26;
+}
+
+.cases-card-fiezta {
+  --stripes: #FA089D 0rem 1rem, #02CCFE 1rem 2rem, #6825B0 2rem 3rem, #FCA056 3rem 4rem, #C21BC8 4rem 5rem, #0A2F4B 5rem 6rem;
+  --tag: 0, 9, 19;
+  --tag-text: 243, 236, 255;
+}
+
+.cases-link::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+}
+
+.cases-link:hover {
+  text-decoration: underline;
+  text-underline-offset: 0.25rem;
+}
+
+.cases-name {
+  justify-self: start;
+  padding: 0.375rem 0.625rem;
+  background: rgb(var(--tag));
+  font-size: 1.25rem;
+  font-weight: 700;
+  overflow-wrap: anywhere;
+}
+
+@media (min-width: 64rem) {
+  .cases-inner {
+    gap: clamp(2.5rem, 6vw, 5rem);
+  }
+
+  .cases-list {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 1.25rem;
+  }
+}
