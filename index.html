@@ -96,21 +96,22 @@ html.slides .hero{min-height:calc(100svh / var(--fit, 1))!important}
 .hero>header{padding:18px 20px!important}
 .hero-name{font-size:calc((100vw - 28px) / 8.7)!important;letter-spacing:-0.04em!important;padding-top:0!important;margin-top:0!important}
 .hero-stage{margin-top:0!important;margin-bottom:clamp(110px,32vw,140px)!important;padding:0!important;justify-content:center!important}
-html .hero .hero-art,html.slides .hero .hero-art{flex:none;width:108vw!important;height:auto!important;max-width:none!important;max-height:none!important}
+html .hero .hero-art,html.slides .hero .hero-art{flex:none;width:min(108vw,calc((100svh - 560px) * 1.78))!important;height:auto!important;max-width:none!important;max-height:none!important}
 .hero-stage .marquee{left:-25%!important;right:-25%!important;padding:11px 0!important;font-size:1rem!important}
 .hero-stage .marquee:first-of-type{bottom:-22%!important}
 .hero-stage .marquee:last-of-type{bottom:-46%!important}
 .hero-copy{margin-top:0!important;padding:20px 20px 20px!important;gap:0!important}
 .hero-copy h1{font-size:clamp(2rem,9.2vw,2.5rem)!important;max-width:none!important;padding-right:0!important}
 .hero-copy p{display:none!important}
-.hero-cta{margin-top:0!important;padding:0 20px max(28px,env(safe-area-inset-bottom))!important;justify-content:flex-start!important}
+.hero-cta{margin-top:0!important;padding:0 20px max(48px,calc(env(safe-area-inset-bottom) + 20px))!important;justify-content:flex-start!important}
 }
 /* Seções de destaque: blocos de cor com borda redonda, soltos sobre o papel. */
 /* Os blocos vão de ponta a ponta até 1440 px; em tela mais larga, ficam centralizados. */
 .rounded-band{border-radius:40px;width:100%;max-width:1440px;margin-inline:auto;overflow:clip}
+@media (max-width:767px){.rounded-band{border-radius:0}}
 @media (prefers-reduced-motion:reduce){.js .hi,.js .rv{opacity:1;translate:none;animation:none;transition:none}.marquee-track{animation:none}}
 /* Hero em celular baixo (até 700 px de altura): robôs, faixas e respiros menores, para tudo caber sem sobrepor. */
-@media (max-width:767px) and (max-height:700px){html .hero .hero-art,html.slides .hero .hero-art{width:88vw!important}.hero-stage{margin-bottom:104px!important}.hero-stage .marquee:first-of-type{bottom:-30%!important}.hero-stage .marquee:last-of-type{bottom:-58%!important}.hero>header{padding:12px 20px!important}.hero-copy{padding:8px 20px!important}.hero-copy h1{font-size:1.85rem!important}html .hero{row-gap:10px!important}}
+@media (max-width:767px) and (max-height:700px){html .hero .hero-art,html.slides .hero .hero-art{width:min(88vw,calc((100svh - 450px) * 1.78))!important}.hero-stage{margin-bottom:104px!important}.hero-stage .marquee:first-of-type{bottom:-30%!important}.hero-stage .marquee:last-of-type{bottom:-58%!important}.hero>header{padding:12px 20px!important}.hero-copy{padding:8px 20px!important}.hero-copy h1{font-size:1.85rem!important}html .hero{row-gap:10px!important}}
 </style>
 <script>document.documentElement.classList.add('js')</script>
 </head>
