@@ -1,359 +1,417 @@
 <!doctype html>
 <html lang="pt-BR">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Craftomakers: landing page feita por agentes de IA</title>
-  <meta name="description" content="Uma agência que faz o trabalho para você, com uma equipe de agentes de IA: landing page, assets de campanha e assessoria de IA.">
-  <meta name="robots" content="noindex">
-  <meta name="theme-color" content="#FFFFFF">
-  <link rel="preload" href="fonts/inter-variable.woff2" as="font" type="font/woff2" crossorigin>
-  <link rel="stylesheet" href="css/tokens.css">
-  <link rel="stylesheet" href="css/base.css">
-  <link rel="stylesheet" href="css/layout.css">
-  <link rel="stylesheet" href="css/components/brand.css">
-  <link rel="stylesheet" href="css/components/button.css">
-  <link rel="stylesheet" href="css/components/label.css">
-  <link rel="stylesheet" href="css/components/poster.css">
-  <link rel="stylesheet" href="css/components/field.css">
-  <link rel="stylesheet" href="css/components/menu.css">
-  <link rel="stylesheet" href="css/components/footer.css">
-  <link rel="stylesheet" href="css/sections/hero.css">
-  <link rel="stylesheet" href="css/sections/impact.css">
-  <link rel="stylesheet" href="css/sections/services.css">
-  <link rel="stylesheet" href="css/sections/process.css">
-  <link rel="stylesheet" href="css/sections/evaluation.css">
-  <link rel="stylesheet" href="css/sections/benefits.css">
-  <link rel="stylesheet" href="css/sections/cases.css">
-  <script type="module" src="js/menu.js"></script>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Craftomakers – Agência de IA</title>
+<meta name="description" content="Agência de IA: landing pages, campanhas para as redes e assessoria de IA para o seu negócio.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Archivo+Black&amp;family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet">
+<style>
+@font-face{font-family:Allison;src:url(fonts/allison.woff2) format("woff2");font-display:swap}
+@font-face{font-family:Anton;src:url(fonts/anton.woff2) format("woff2");font-display:swap}
+@font-face{font-family:Montserrat;font-weight:700;src:url(fonts/montserrat-700.woff2) format("woff2");font-display:swap}
+body{margin:0;background:#F3F0E8}
+a{color:#111111}a:hover{color:#000000}
+/* Desktop sem JS: o snap do CSS. Com JS, js/slides.js faz o slide e o snap sai. */
+@media (min-width:1024px) and (hover:hover) and (pointer:fine){html{scroll-snap-type:y proximity}}
+@media (prefers-reduced-motion:no-preference){html:not(.slides){scroll-behavior:smooth}}
+html.slides{scroll-snap-type:none;overscroll-behavior:none}
+html.slides [data-slide]{min-height:calc(100vh / var(--fit, 1))!important;min-height:calc(100svh / var(--fit, 1))!important;zoom:var(--fit, 1)}
+/* Botões de subir e descer: fixos no canto, só com o slide ligado e fora do hero (js/slides.js). */
+.slide-nav{position:fixed;right:16px;bottom:16px;z-index:50;display:flex;flex-direction:column;gap:8px;transition:opacity .22s,visibility .22s}
+.slide-nav[hidden]{display:none}
+.slide-nav.is-away{opacity:0;visibility:hidden}
+@media (max-width:767px){.slide-nav{flex-direction:row;right:12px;bottom:12px}.slide-nav button{width:40px;height:40px}}
+.slide-nav button{width:48px;height:48px;display:grid;place-items:center;padding:0;border-radius:999px;border:2px solid #111111;background:#F3F0E8;color:#111111;cursor:pointer;transition:background-color .22s,color .22s,opacity .22s}
+.slide-nav button:hover:not(:disabled){background:#111111;color:#F3F0E8}
+.slide-nav button:disabled{opacity:.35;cursor:default}
+.slide-nav button:focus-visible{outline:3px solid #FF5A1F;outline-offset:2px}
+/* No slide, cada seção cabe na tela: respiros, imagens e o título do método acompanham a altura. */
+html.slides .slide-body{padding-top:clamp(64px,10vh,112px)!important;padding-bottom:clamp(48px,7vh,96px)!important}
+html.slides #metodo>.slide-body{gap:clamp(28px,4vh,56px)!important}
+html.slides .metodo-title{font-size:clamp(2.6rem,min(6.4vw,9vh),6rem)!important}
+html.slides .metodo-art{max-height:max(200px,calc(100vh - 600px));width:auto!important}
+html.slides #ofertas>.slide-body,html.slides #cases>.slide-body{gap:clamp(24px,3.5vh,56px)!important}
+html.slides #ofertas h2,html.slides #cases h2{font-size:clamp(2.6rem,min(6vw,8vh),5.6rem)!important}
+html.slides #ofertas div:has(>img){height:min(200px,20vh)!important}
+html.slides #ofertas img{max-height:min(230px,24vh)!important}
+html.slides #cases a{min-height:min(400px,36vh)!important}
+html.slides .hero-art{max-height:max(280px,calc(100vh - 440px));width:auto!important;max-width:min(980px,96%)}
+/* Entrada: o hero aparece ao abrir; cada bloco sobe e aparece ao entrar na tela (js/reveal.js). */
+.js .hi{opacity:0;translate:0 14px;animation:hero-in .6s cubic-bezier(.22,1,.36,1) forwards;animation-delay:calc(var(--i, 0) * 60ms + 40ms)}
+@keyframes hero-in{to{opacity:1;translate:none}}
+.js .rv{opacity:0;translate:0 20px;transition:opacity .7s cubic-bezier(.22,1,.36,1),translate .7s cubic-bezier(.22,1,.36,1);transition-delay:calc(var(--i, 0) * 70ms)}
+.js .rv.in{opacity:1;translate:none}
+/* Faixas correndo: a trilha tem o texto duas vezes e anda metade da própria largura, em loop. */
+.marquee-track{display:flex;width:max-content;animation:marquee var(--duration, 50s) linear infinite}
+.marquee-track.reverse{animation-direction:reverse}
+.marquee:hover .marquee-track{animation-play-state:paused}
+@keyframes marquee{to{transform:translateX(-50%)}}
+/* Marca-texto: o laranja cobre só a altura das maiúsculas, sem subir na linha de cima. */
+.highlight{background:linear-gradient(#FF5A1F,#FF5A1F) 0 .235em/100% .88em no-repeat;padding:0 .12em;-webkit-box-decoration-break:clone;box-decoration-break:clone}
+/* Ofertas e cases no celular: uma fila que se passa com o dedo, com o próximo cartão aparecendo
+   na borda; a dos cases também passa sozinha (js/carousel.js). */
+@media (max-width:767px){
+.swipe-row{display:flex!important;overflow-x:auto;scroll-snap-type:x mandatory;margin-inline:-24px;padding:12px 24px 14px;scroll-padding-inline:24px;overscroll-behavior-x:contain;scrollbar-width:none}
+.swipe-row::-webkit-scrollbar{display:none}
+.swipe-row>*{flex:0 0 82%;min-width:0;box-sizing:border-box;scroll-snap-align:start}
+.swipe-row img{max-width:100%}
+.swipe-row.is-single{gap:48px!important}
+.swipe-row.is-single>*{flex-basis:100%}
+html.slides .swipe-row{touch-action:pan-x}
+.swipe-dots{display:flex;justify-content:center;gap:4px;margin-top:-20px}
+.swipe-dots button{width:24px;height:24px;padding:0;border:0;background:none;display:grid;place-items:center;cursor:pointer}
+.swipe-dots button::before{content:"";width:8px;height:8px;border-radius:999px;background:currentColor;opacity:.3;transition:width .22s,opacity .22s}
+.swipe-dots button[aria-current="true"]::before{width:22px;opacity:1}
+}
+.swipe-frame{position:relative}
+.swipe-arrow{position:absolute;top:calc(50% + 36px);transform:translateY(-50%);z-index:2;width:36px;height:36px;padding:0;border:0;border-radius:999px;display:grid;place-items:center;background:rgba(17,17,17,.45);color:#F3F0E8;cursor:pointer}
+.swipe-arrow.is-prev{left:-14px}
+.swipe-arrow.is-next{right:-14px}
+.swipe-arrow[hidden]{display:none}
+@media (min-width:768px){.swipe-dots,.swipe-arrow{display:none}}
+/* Tablet: as três ofertas numa linha e os cases em 2×2, mais baixos, para cada seção caber numa tela. */
+@media (min-width:768px) and (max-width:1023px){#ofertas .swipe-row{grid-template-columns:repeat(3,minmax(0,1fr))!important}#cases .swipe-row{grid-template-columns:repeat(2,minmax(0,1fr))!important}html.slides #cases a,#cases a{min-height:min(300px,28vh)!important}#ofertas h3{font-size:clamp(1.3rem,2.6vw,1.9rem)!important}}
+/* Cada cartão de case mede a própria largura: o slogan nunca passa dela (cqi). */
+#cases [data-tilt]{container-type:inline-size}
+/* Desktop: os quatro cases sempre numa linha, para a seção caber numa tela. */
+@media (min-width:1024px){#cases .swipe-row{grid-template-columns:repeat(4,minmax(0,1fr))!important}}
+/* Celular: cada seção cabe numa tela. Saem os robôs e as frases de apoio do método e do "nada é
+   por acaso" (ficam número e nome), a lista de cada oferta e parte do respiro da avaliação. */
+@media (max-width:767px){
+#metodo .rv:has(>.metodo-art),[data-slide]:has(.section-title) img,#metodo .slide-body>div:last-child p,[data-slide]:has(.section-title) h3+p,#ofertas ul{display:none!important}
+#avaliacao>div:last-child{padding-top:112px!important}
+#metodo .slide-body>div:last-child>div{padding:18px 22px!important;gap:6px!important}
+[data-slide]:has(.section-title) h3{font-size:1.2rem!important}
+[data-slide]:has(.section-title) .rv:has(>div>h3){padding:14px 0!important}
+}
+/* Títulos no celular: menores, para não ocupar a tela inteira. */
+@media (max-width:767px){html .metodo-title,html.slides .metodo-title,section h2.section-title,html.slides #ofertas h2,html.slides #cases h2,#ofertas h2,#cases h2{font-size:2rem!important}#avaliacao h2{font-size:2.4rem!important}.impact-word{font-size:2.2rem!important}#ofertas h3{font-size:1.5rem!important}}
+/* Hero no celular: nome inteiro na largura, robôs na largura toda com as faixas atrás, o espaço
+   que sobra vai para cima do nome e entre os robôs e o título; sai o parágrafo de apoio. */
+@media (max-width:767px){
+html .hero{min-height:100vh!important;min-height:100svh!important;justify-content:space-between!important;row-gap:16px!important}
+html.slides .hero{min-height:calc(100svh / var(--fit, 1))!important}
+.hero>header{padding:18px 20px!important}
+.hero-name{font-size:calc((100vw - 28px) / 8.7)!important;letter-spacing:-0.04em!important;padding-top:0!important;margin-top:0!important}
+.hero-stage{margin-top:0!important;margin-bottom:clamp(110px,32vw,140px)!important;padding:0!important;justify-content:center!important}
+html .hero .hero-art,html.slides .hero .hero-art{flex:none;width:108vw!important;height:auto!important;max-width:none!important;max-height:none!important}
+.hero-stage .marquee{left:-25%!important;right:-25%!important;padding:11px 0!important;font-size:1rem!important}
+.hero-stage .marquee:first-of-type{bottom:-22%!important}
+.hero-stage .marquee:last-of-type{bottom:-46%!important}
+.hero-copy{margin-top:0!important;padding:20px 20px 20px!important;gap:0!important}
+.hero-copy h1{font-size:clamp(2rem,9.2vw,2.5rem)!important;max-width:none!important;padding-right:0!important}
+.hero-copy p{display:none!important}
+.hero-cta{margin-top:0!important;padding:0 20px max(28px,env(safe-area-inset-bottom))!important;justify-content:flex-start!important}
+}
+/* Seções de destaque: blocos de cor com borda redonda, soltos sobre o papel. */
+/* Os blocos vão de ponta a ponta até 1440 px; em tela mais larga, ficam centralizados. */
+.rounded-band{border-radius:40px;width:100%;max-width:1440px;margin-inline:auto;overflow:clip}
+@media (prefers-reduced-motion:reduce){.js .hi,.js .rv{opacity:1;translate:none;animation:none;transition:none}.marquee-track{animation:none}}
+/* Hero em celular baixo (até 700 px de altura): robôs, faixas e respiros menores, para tudo caber sem sobrepor. */
+@media (max-width:767px) and (max-height:700px){html .hero .hero-art,html.slides .hero .hero-art{width:88vw!important}.hero-stage{margin-bottom:104px!important}.hero-stage .marquee:first-of-type{bottom:-30%!important}.hero-stage .marquee:last-of-type{bottom:-58%!important}.hero>header{padding:12px 20px!important}.hero-copy{padding:8px 20px!important}.hero-copy h1{font-size:1.85rem!important}html .hero{row-gap:10px!important}}
+</style>
+<script>document.documentElement.classList.add('js')</script>
 </head>
 <body>
-  <svg class="icon-sprite" aria-hidden="true">
-    <symbol id="icon-menu" viewBox="0 0 24 24">
-      <path d="M4 6h16M4 12h16M4 18h16"/>
-    </symbol>
-    <symbol id="icon-close" viewBox="0 0 24 24">
-      <path d="M6 6l12 12M18 6L6 18"/>
-    </symbol>
-    <symbol id="icon-arrow-right" viewBox="0 0 24 24">
-      <path d="M5 12h14M13 6l6 6-6 6"/>
-    </symbol>
-    <symbol id="icon-files" viewBox="0 0 24 24">
-      <rect x="3" y="3" width="10" height="10" rx="2"/>
-      <rect x="12" y="8" width="9" height="9" rx="2"/>
-      <rect x="6" y="14" width="8" height="8" rx="2"/>
-    </symbol>
-    <symbol id="icon-spark" viewBox="0 0 24 24">
-      <path d="M12 3v4M12 17v4M3 12h4M17 12h4M12 9l3 3-3 3-3-3z"/>
-    </symbol>
-    <symbol id="icon-target" viewBox="0 0 24 24">
-      <circle cx="12" cy="12" r="9"/>
-      <circle cx="12" cy="12" r="5"/>
-      <circle cx="12" cy="12" r="1"/>
-    </symbol>
-    <symbol id="icon-team" viewBox="0 0 24 24">
-      <rect x="5" y="8" width="14" height="11" rx="3"/>
-      <path d="M12 8V4M9 13h.01M15 13h.01M3 13v2M21 13v2"/>
-    </symbol>
-    <symbol id="icon-shield" viewBox="0 0 24 24">
-      <path d="M12 3l7 3v5c0 4.5-3 8-7 10-4-2-7-5.5-7-10V6zM9 12l2 2 4-4"/>
-    </symbol>
-    <symbol id="icon-approve" viewBox="0 0 24 24">
-      <circle cx="12" cy="12" r="9"/>
-      <path d="M8 12l3 3 5-6"/>
-    </symbol>
-    <symbol id="icon-chevron-down" viewBox="0 0 24 24">
-      <path d="M6 9l6 6 6-6"/>
-    </symbol>
-    <symbol id="icon-instagram" viewBox="0 0 24 24">
-      <rect x="3" y="3" width="18" height="18" rx="5"/>
-      <circle cx="12" cy="12" r="3.5"/>
-      <path d="M17.2 6.8h.01"/>
-    </symbol>
-  </svg>
+<div style="font-family: Inter, system-ui, sans-serif; color: #111111; background: #F3F0E8; overflow-x: clip">
 
-  <details class="menu">
-    <summary class="menu-toggle">
-      <svg class="icon menu-icon menu-icon-open" aria-hidden="true"><use href="#icon-menu"/></svg>
-      <svg class="icon menu-icon menu-icon-close" aria-hidden="true"><use href="#icon-close"/></svg>
-      <span class="visually-hidden">Menu</span>
-    </summary>
-    <nav class="menu-panel" aria-label="Seções da página">
-      <ul class="menu-list">
-        <li><a href="#hero">Início</a></li>
-        <li><a href="#impact">Impacto real</a></li>
-        <li><a href="#services">Nossos serviços</a></li>
-        <li><a href="#process">O processo</a></li>
-        <li><a href="#benefits">Vantagens</a></li>
-        <li><a href="#evaluation">Avaliação</a></li>
-        <li><a href="#cases">Cases</a></li>
-      </ul>
-    </nav>
-  </details>
+<section data-slide class="hero" style="position: relative; min-height: min(100vh, 1100px); box-sizing: border-box; display: flex; flex-direction: column; scroll-snap-align: start; overflow: hidden">
+<header class="hi" style="--i: 0; position: relative; z-index: 3; width: 100%; max-width: 1360px; margin: 0 auto; box-sizing: border-box; padding: 22px 24px; display: flex; flex-wrap: wrap; gap: 12px; align-items: center; justify-content: flex-end">
+<div style="display: flex; flex-wrap: wrap; gap: 8px; align-items: center">
+<div style="padding: 8px 14px; border-radius: 999px; background: #111111; color: #F3F0E8; font-size: 0.85rem; font-weight: 600">Agência de IA</div></div>
+</header>
 
-  <main>
-    <section class="hero" id="hero">
-      <img class="hero-agents" src="img/hero-agents.webp" alt="Os sete agentes robôs da Craftomakers juntos: SEO com lupa, jurídico de gravata e pasta, design de boina com pincel, marketing com megafone, desenvolvimento com chave, tradução com plaquinhas de idiomas e revisão com prancheta" width="1613" height="900" fetchpriority="high">
-      <h1 class="hero-title">CRAFTOMAKERS</h1>
-      <h2 class="hero-subtitle">Uma agência digital com agentes de IA</h2>
-    </section>
+<div class="hi hero-name" style="--i: 1; position: relative; z-index: 1; text-align: center; font-family: 'Archivo Black', sans-serif; font-size: min(calc((100vw - 48px) / 8.8), 13.6rem); line-height: 0.82; letter-spacing: -0.045em; color: #111111; padding-top: 12px; white-space: nowrap" aria-hidden="true">CRAFTO<span style="color: #FF5A1F">M</span>AKERS</div>
 
-    <section class="section section-inverse poster impact" id="impact">
-      <div class="container">
-        <h2 class="poster-title">Impacto real</h2>
-        <p class="poster-subtitle">Uma IA, múltiplas personas</p>
-        <div class="impact-columns">
-          <div class="impact-side impact-pros">
-            <h3 class="label">Prós</h3>
-            <ul class="impact-list">
-              <li>Mais rápido</li>
-              <li>Mais preciso</li>
-              <li>Mais qualidade</li>
-            </ul>
-          </div>
-          <div class="impact-side impact-cons">
-            <h3 class="label">Contra</h3>
-            <ul class="impact-list">
-              <li><span class="visually-hidden">Sem </span><s class="impact-struck">Criatividade</s></li>
-            </ul>
-            <p class="impact-note">A ideia vem de você.</p>
-          </div>
-        </div>
-      </div>
-    </section>
+<div class="hi hero-stage" style="--i: 2; position: relative; z-index: 2; display: flex; justify-content: center; margin-top: calc(min(calc((100vw - 48px) / 8.8), 13.6rem) * -0.3); padding: 0 16px">
+<img class="hero-art" src="img/hero-agents.webp" alt="Os agentes robôs da Craftomakers, cada um com sua ferramenta" style="width: min(980px, 96%); height: auto; display: block">
+<div class="marquee" style="position: absolute; z-index: -1; left: -5%; right: -5%; bottom: 24%; transform: rotate(-4deg); background: #111111; color: #F3F0E8; padding: 14px 0; white-space: nowrap; overflow: hidden; font-family: 'Archivo Black', sans-serif; font-size: clamp(1rem, 1.8vw, 1.5rem); letter-spacing: 0.04em" aria-hidden="true"><div class="marquee-track" style="--duration: 60s"><span>LANDING PAGE ✦ CAMPANHAS COM IA ✦ ASSESSORIA DE IA ✦ LANDING PAGE ✦ CAMPANHAS COM IA ✦ ASSESSORIA DE IA ✦ LANDING PAGE ✦ CAMPANHAS COM IA ✦ ASSESSORIA DE IA ✦&nbsp;</span><span>LANDING PAGE ✦ CAMPANHAS COM IA ✦ ASSESSORIA DE IA ✦ LANDING PAGE ✦ CAMPANHAS COM IA ✦ ASSESSORIA DE IA ✦ LANDING PAGE ✦ CAMPANHAS COM IA ✦ ASSESSORIA DE IA ✦&nbsp;</span></div></div>
+<div class="marquee" style="position: absolute; z-index: -1; left: -5%; right: -5%; bottom: 9%; transform: rotate(3deg); background: #FFD23F; color: #111111; padding: 14px 0; white-space: nowrap; overflow: hidden; font-family: 'Archivo Black', sans-serif; font-size: clamp(1rem, 1.8vw, 1.5rem); letter-spacing: 0.04em" aria-hidden="true"><div class="marquee-track reverse" style="--duration: 50s"><span>CONHECE → CONFIA → COMPRA → CONHECE → CONFIA → COMPRA → CONHECE → CONFIA → COMPRA → CONHECE → CONFIA → COMPRA → CONHECE → CONFIA → COMPRA →&nbsp;</span><span>CONHECE → CONFIA → COMPRA → CONHECE → CONFIA → COMPRA → CONHECE → CONFIA → COMPRA → CONHECE → CONFIA → COMPRA → CONHECE → CONFIA → COMPRA →&nbsp;</span></div></div>
+</div>
 
-    <section class="section poster services" id="services">
-      <div class="container">
-        <h2 class="poster-title">Nossos serviços</h2>
-        <ul class="services-list">
-          <li>
-            <article class="services-card section-inverse">
-              <span class="services-figure"><img src="img/agent-marketing.webp" alt="" width="474" height="520" loading="lazy"></span>
-              <h3 class="services-name">Landing page</h3>
-              <p class="services-text">Funil de vendas</p>
-              <ul class="services-includes">
-                <li><svg class="icon" aria-hidden="true"><use href="#icon-approve"/></svg>Storytelling</li>
-                <li><svg class="icon" aria-hidden="true"><use href="#icon-approve"/></svg>Estrutura da oferta</li>
-                <li><svg class="icon" aria-hidden="true"><use href="#icon-approve"/></svg>Visual e layout do seu negócio</li>
-                <li><svg class="icon" aria-hidden="true"><use href="#icon-approve"/></svg>Código, SEO e publicação</li>
-              </ul>
-            </article>
-          </li>
-          <li>
-            <article class="services-card section-inverse services-card-mid">
-              <span class="services-figure"><img src="img/agent-design.webp" alt="" width="539" height="520" loading="lazy"></span>
-              <h3 class="services-name">Campanhas com IA</h3>
-              <p class="services-text">Mecanismo de IA para publicação</p>
-              <ul class="services-includes">
-                <li><svg class="icon" aria-hidden="true"><use href="#icon-approve"/></svg>Pack com agentes e comandos</li>
-                <li><svg class="icon" aria-hidden="true"><use href="#icon-approve"/></svg>Coleção de material e informações</li>
-                <li><svg class="icon" aria-hidden="true"><use href="#icon-approve"/></svg>WhatsApp, Instagram etc.</li>
-                <li><svg class="icon" aria-hidden="true"><use href="#icon-approve"/></svg>Você define a campanha</li>
-              </ul>
-            </article>
-          </li>
-          <li>
-            <article class="services-card services-card-light">
-              <span class="services-figure"><img src="img/agent-dev.webp" alt="" width="481" height="520" loading="lazy"></span>
-              <h3 class="services-name">Assessoria de IA</h3>
-              <p class="services-text">IA no seu negócio</p>
-              <ul class="services-includes">
-                <li><svg class="icon" aria-hidden="true"><use href="#icon-approve"/></svg>Avaliamos seu processo</li>
-                <li><svg class="icon" aria-hidden="true"><use href="#icon-approve"/></svg>Apontamos onde você pode usar IA</li>
-                <li><svg class="icon" aria-hidden="true"><use href="#icon-approve"/></svg>Medimos o resultado</li>
-              </ul>
-            </article>
-          </li>
-        </ul>
-      </div>
-    </section>
 
-    <section class="section section-inverse poster process" id="process">
-      <div class="container">
-        <h2 class="poster-title">O processo</h2>
-        <div class="process-flow">
-          <div class="process-inputs process-box">
-            <h3 class="process-box-title">A ideia</h3>
-            <p class="process-box-lead">Você envia:</p>
-            <ul class="process-box-list">
-              <li>Logo</li>
-              <li>Brandbook</li>
-              <li>Fotos</li>
-              <li>Textos</li>
-              <li>Dados do negócio</li>
-            </ul>
-            <p class="process-warning">
-              <svg class="icon" aria-hidden="true"><use href="#icon-spark"/></svg>
-              Sem eles, o trabalho não começa.
-            </p>
-          </div>
+<div class="hi hero-copy" style="--i: 3; position: relative; z-index: 3; width: 100%; max-width: 1360px; margin: 0 auto; box-sizing: border-box; padding: 8px 24px 32px; display: flex; flex-wrap: wrap; gap: 20px 48px; align-items: flex-end; justify-content: space-between">
+<h1 style="margin: 0; font-family: 'Archivo Black', sans-serif; font-weight: 400; font-size: clamp(2rem, 4.2vw, 3.8rem); line-height: 0.98; letter-spacing: -0.03em; max-width: 15ch; background: #F3F0E8; padding: 6px 10px 6px 0">Onde seu cliente te conhece, confia e compra</h1>
+<p style="margin: 0; font-size: 1.15rem; line-height: 1.5; color: #333333; max-width: 40ch; background: #F3F0E8; padding: 6px 0">Somos uma agência de IA. Criamos sua landing page, suas campanhas para as redes e levamos a inteligência artificial para dentro do seu negócio.</p>
+</div>
 
-          <svg class="icon process-arrow" aria-hidden="true"><use href="#icon-arrow-right"/></svg>
+<div class="hi hero-cta" style="--i: 4; position: relative; z-index: 3; display: flex; justify-content: center; padding: 0 24px 28px">
+<a href="#metodo" style="display: inline-flex; align-items: center; gap: 10px; min-height: 48px; padding: 0 22px; border-radius: 999px; border: 2px solid #111111; background: #F3F0E8; text-decoration: none; color: #111111; font-weight: 600">Role para descobrir
+<svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14"></path><path d="M6 13l6 6 6-6"></path></svg>
+</a>
+</div>
+</section>
 
-          <div class="process-loop">
-            <h3 class="process-box-title">Os agentes</h3>
-            <div class="process-cycle">
-              <svg class="process-ring" viewBox="0 0 352 300" aria-hidden="true">
-                <defs>
-                  <marker id="process-arrowhead" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="3.2" markerHeight="3.2" orient="auto">
-                    <path d="M1 1l6 4-6 4" stroke-width="2.2"/>
-                  </marker>
-                </defs>
-                <path d="M243.8 56.5A128 128 0 0 1 302.8 147.2" marker-end="url(#process-arrowhead)"/>
-                <path d="M236.1 278A128 128 0 0 1 115.9 278" marker-end="url(#process-arrowhead)"/>
-                <path d="M49.2 147.2A128 128 0 0 1 108.2 56.5" marker-end="url(#process-arrowhead)"/>
-              </svg>
-              <ol>
-                <li class="process-station process-station-craft">
-                  <h3 class="process-station-title">Trabalho</h3>
-                </li>
-                <li class="process-station process-station-result">
-                  <h3 class="process-station-title">Resultado</h3>
-                </li>
-                <li class="process-station process-station-evaluation">
-                  <h3 class="process-station-title">Avaliação</h3>
-                </li>
-              </ol>
-            </div>
-          </div>
+<section data-slide id="metodo" style="position: relative; min-height: min(100vh, 1100px); box-sizing: border-box; display: flex; align-items: center; scroll-snap-align: start; border-top: 2px solid #111111">
+<div class="slide-body" style="width: 100%; max-width: 1360px; margin: 0 auto; box-sizing: border-box; padding: 112px 24px 96px; display: flex; flex-direction: column; gap: 56px">
+<div style="position: relative; display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 24px; align-items: end">
+<div class="rv" style="display: flex; flex-direction: column; gap: 22px">
+<div style="align-self: flex-start; padding: 6px 12px; background: #111111; color: #F3F0E8; font-weight: 700; font-size: 0.85rem; letter-spacing: 0.08em">O MÉTODO</div>
+<h2 class="metodo-title" style="margin: 0; font-family: 'Archivo Black', sans-serif; font-weight: 400; font-size: clamp(2.6rem, 6.4vw, 6rem); line-height: 0.9; letter-spacing: -0.04em; text-transform: uppercase">Seu negócio é bom, mas na internet ninguém <span class="highlight">sabe disso</span></h2>
+</div>
+<div class="rv" style="--i: 1; display: flex; justify-content: center">
+<img class="metodo-art" src="img/agent-seo.webp" alt="Agente detetive com lupa" style="width: min(420px, 80%); height: auto; display: block; transform: rotate(4deg)">
+</div>
+</div>
+<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 16px">
 
-          <svg class="icon process-arrow" aria-hidden="true"><use href="#icon-arrow-right"/></svg>
+<div class="rv" data-tilt style="--i: 0; border-radius: 20px; padding: 28px; display: flex; flex-direction: column; gap: 12px; background: #111111; color: #FFFFFF;">
+<div style="font-family: 'Archivo Black', sans-serif; font-size: 3.4rem; line-height: 1">01</div>
+<h3 style="margin: 0; font-family: 'Archivo Black', sans-serif; font-weight: 400; font-size: 1.7rem; letter-spacing: -0.02em; text-transform: uppercase">Sua marca</h3>
+<p style="margin: 0; font-size: 1.1rem; line-height: 1.5">A página com a identidade do seu negócio.</p>
+</div>
 
-          <div class="process-delivery process-box">
-            <h3 class="process-box-title">O ativo</h3>
-            <p class="process-box-lead">Você recebe: landing page</p>
-            <ul class="process-box-list">
-              <li>Uma página, uma ação</li>
-              <li>Destino das suas campanhas</li>
-              <li>Oferta clara</li>
-              <li>Contato ou venda no fim</li>
-            </ul>
-            <p class="process-box-lead">Você recebe: campanhas</p>
-            <ul class="process-box-list">
-              <li>Mecanismo para gerar imagens</li>
-              <li>Campanhas novas quando quiser</li>
-            </ul>
-          </div>
-        </div>
-      </div>
-    </section>
+<div class="rv" data-tilt style="--i: 1; border-radius: 20px; padding: 28px; display: flex; flex-direction: column; gap: 12px; background: #FF5A1F;">
+<div style="font-family: 'Archivo Black', sans-serif; font-size: 3.4rem; line-height: 1">02</div>
+<h3 style="margin: 0; font-family: 'Archivo Black', sans-serif; font-weight: 400; font-size: 1.7rem; letter-spacing: -0.02em; text-transform: uppercase">Seu público</h3>
+<p style="margin: 0; font-size: 1.1rem; line-height: 1.5">A mensagem certa para quem compra de você.</p>
+</div>
 
-    <section class="section poster benefits" id="benefits">
-      <div class="container benefits-inner">
-        <header class="poster-header">
-          <h2 class="poster-title">Vantagens</h2>
-          <p class="poster-subtitle">Por que escolher a Craftomakers?</p>
-        </header>
-        <div>
-          <ul class="benefits-list" data-provisional="[provisório] textos das vantagens a revisar pelo marketing">
-            <li class="benefits-item">
-              <span class="benefits-icon"><svg class="icon" aria-hidden="true"><use href="#icon-target"/></svg></span>
-              <div>
-                <h3 class="benefits-name">Projetos personalizados</h3>
-                <p class="benefits-text">Feitos a partir dos seus insumos, para o objetivo do seu negócio.</p>
-              </div>
-            </li>
-            <li class="benefits-item">
-              <span class="benefits-icon"><svg class="icon" aria-hidden="true"><use href="#icon-team"/></svg></span>
-              <div>
-                <h3 class="benefits-name">Equipe de agentes de IA</h3>
-                <p class="benefits-text">Marketing, design, desenvolvimento, SEO e revisão, cada um na sua parte.</p>
-              </div>
-            </li>
-            <li class="benefits-item">
-              <span class="benefits-icon"><svg class="icon" aria-hidden="true"><use href="#icon-shield"/></svg></span>
-              <div>
-                <h3 class="benefits-name">Suporte do seu projeto</h3>
-                <p class="benefits-text">Da ideia à entrega, com acompanhamento em todas as etapas.</p>
-              </div>
-            </li>
-            <li class="benefits-item">
-              <span class="benefits-icon"><svg class="icon" aria-hidden="true"><use href="#icon-approve"/></svg></span>
-              <div>
-                <h3 class="benefits-name">Você aprova tudo</h3>
-                <p class="benefits-text">Nada sai da nossa equipe sem o seu sim.</p>
-              </div>
-            </li>
-          </ul>
-        </div>
-        <img class="benefits-agent" src="img/agent-review.webp" alt="" width="446" height="520" loading="lazy">
-      </div>
-    </section>
+<div class="rv" data-tilt style="--i: 2; border-radius: 20px; padding: 28px; display: flex; flex-direction: column; gap: 12px; background: #FFD23F;">
+<div style="font-family: 'Archivo Black', sans-serif; font-size: 3.4rem; line-height: 1">03</div>
+<h3 style="margin: 0; font-family: 'Archivo Black', sans-serif; font-weight: 400; font-size: 1.7rem; letter-spacing: -0.02em; text-transform: uppercase">Seu valor</h3>
+<p style="margin: 0; font-size: 1.1rem; line-height: 1.5">A oferta boa demais para recusar.</p>
+</div>
 
-    <section class="section section-inverse poster evaluation" id="evaluation">
-      <div class="container evaluation-inner">
-        <header class="poster-header">
-          <h2 class="poster-title">Avaliação</h2>
-          <p class="poster-subtitle">Faça uma avaliação</p>
-        </header>
-        <div class="evaluation-copy">
-          <p class="section-lead">Conte sobre o seu projeto e receba uma orientação personalizada da nossa equipe.</p>
-          <img class="evaluation-agent" src="img/agent-seo.webp" alt="" width="520" height="520" loading="lazy">
-        </div>
-        <form class="evaluation-form" data-provisional="[provisório] campos, opções e envio da avaliação a definir">
-          <label class="field">
-            <span class="field-label">Qual o seu projeto?</span>
-            <input class="field-input" type="text" name="project" placeholder="Conte em poucas palavras…">
-          </label>
-          <label class="field">
-            <span class="field-label">Qual é o seu prazo?</span>
-            <span class="field-control">
-              <select class="field-input field-select" name="deadline">
-                <option value="">Ex.: em até 15 dias…</option>
-                <option>Em até 15 dias</option>
-                <option>Em até 30 dias</option>
-                <option>Mais de 30 dias</option>
-                <option>Ainda não sei</option>
-              </select>
-              <svg class="icon field-chevron" aria-hidden="true"><use href="#icon-chevron-down"/></svg>
-            </span>
-          </label>
-          <label class="field">
-            <span class="field-label">Qual o seu objetivo?</span>
-            <span class="field-control">
-              <select class="field-input field-select" name="goal">
-                <option value="">Ex.: vender, captar contatos, divulgar…</option>
-                <option>Vender</option>
-                <option>Captar contatos</option>
-                <option>Agendar atendimentos</option>
-                <option>Divulgar</option>
-              </select>
-              <svg class="icon field-chevron" aria-hidden="true"><use href="#icon-chevron-down"/></svg>
-            </span>
-          </label>
-          <button class="button button-wide" type="button">
-            Pedir uma avaliação
-            <svg class="icon" aria-hidden="true"><use href="#icon-arrow-right"/></svg>
-          </button>
-        </form>
-      </div>
-    </section>
+</div>
+</div>
+</section>
 
-    <section class="section poster cases" id="cases">
-      <div class="container cases-inner">
-        <header class="poster-header">
-          <h2 class="poster-title">Cases</h2>
-          <p class="poster-subtitle">Projetos que a gente já fez</p>
-        </header>
-        <ul class="cases-list" data-provisional="[provisório] imagem, descrição e link de cada projeto, com autorização do cliente">
-          <li class="cases-card cases-card-teia"><h3 class="cases-name"><a class="cases-link" href="https://teiaativa.com.br/" target="_blank" rel="noopener">Teia Ativa</a></h3></li>
-          <li class="cases-card cases-card-orvanno"><h3 class="cases-name"><a class="cases-link" href="https://orvanno.com.br/" target="_blank" rel="noopener">Orvanno</a></h3></li>
-          <li class="cases-card cases-card-forja"><h3 class="cases-name"><a class="cases-link" href="https://marcelo-mattoso.github.io/crm-landing/" target="_blank" rel="noopener">CRM Forja</a></h3></li>
-          <li class="cases-card cases-card-fiezta"><h3 class="cases-name"><a class="cases-link" href="https://println.github.io/fiezta-d1/" target="_blank" rel="noopener">Fiezta D1</a></h3></li>
-        </ul>
-      </div>
-    </section>
-  </main>
+<section data-slide class="rounded-band" style="position: relative; background: #111111; color: #F3F0E8; min-height: min(100vh, 1100px); box-sizing: border-box; display: flex; align-items: center; scroll-snap-align: start; overflow: hidden">
+<div aria-hidden="true" style="position: absolute; right: -2%; top: 40px; font-family: 'Archivo Black', sans-serif; font-size: clamp(8rem, 24vw, 22rem); line-height: 0.8; color: transparent; -webkit-text-stroke: 2px #333333; letter-spacing: -0.05em">05</div>
+<div class="slide-body" style="position: relative; width: 100%; max-width: 1360px; margin: 0 auto; box-sizing: border-box; padding: 112px 24px; display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 48px; align-items: center">
+<div class="rv" style="display: flex; flex-direction: column; gap: 28px">
+<h2 class="section-title" style="margin: 0; font-family: 'Archivo Black', sans-serif; font-weight: 400; font-size: clamp(2.6rem, 5.6vw, 5.2rem); line-height: 0.9; letter-spacing: -0.04em; text-transform: uppercase">Nada na sua página é por <span style="color: #FF5A1F">acaso</span></h2>
+<img src="img/agent-review.webp" alt="Agente revisor com prancheta" style="width: min(320px, 70%); height: auto; display: block; transform: rotate(-5deg)">
+</div>
+<div style="display: flex; flex-direction: column">
 
-  <footer class="section-inverse footer">
-    <div class="container footer-inner">
-      <div>
-        <a class="brand" href="#hero">
-          <span class="brand-name">CRAFTOMAKERS</span>
-        </a>
-        <p class="footer-tagline">Inteligências artesanais, crescimento orquestrado.</p>
-      </div>
-    </div>
-  </footer>
+<div class="rv" style="--i: 1; display: flex; gap: 22px; align-items: baseline; padding: 20px 0; border-top: 1px solid #3A3A3A">
+<div style="font-family: 'Archivo Black', sans-serif; font-size: 2rem; color: #FF5A1F; min-width: 2.2ch">01</div>
+<div style="display: flex; flex-direction: column; gap: 6px">
+<h3 style="margin: 0; font-family: 'Archivo Black', sans-serif; font-weight: 400; font-size: 1.45rem; letter-spacing: -0.01em; text-transform: uppercase">Estudamos seu mercado</h3>
+<p style="margin: 0; font-size: 1.1rem; line-height: 1.5; color: #CFCFCF">Seus concorrentes e o que seu cliente procura.</p>
+</div>
+</div>
+
+<div class="rv" style="--i: 2; display: flex; gap: 22px; align-items: baseline; padding: 20px 0; border-top: 1px solid #3A3A3A">
+<div style="font-family: 'Archivo Black', sans-serif; font-size: 2rem; color: #FF5A1F; min-width: 2.2ch">02</div>
+<div style="display: flex; flex-direction: column; gap: 6px">
+<h3 style="margin: 0; font-family: 'Archivo Black', sans-serif; font-weight: 400; font-size: 1.45rem; letter-spacing: -0.01em; text-transform: uppercase">Definimos seu público</h3>
+<p style="margin: 0; font-size: 1.1rem; line-height: 1.5; color: #CFCFCF">Para quem é e para quem não é.</p>
+</div>
+</div>
+
+<div class="rv" style="--i: 3; display: flex; gap: 22px; align-items: baseline; padding: 20px 0; border-top: 1px solid #3A3A3A">
+<div style="font-family: 'Archivo Black', sans-serif; font-size: 2rem; color: #FF5A1F; min-width: 2.2ch">03</div>
+<div style="display: flex; flex-direction: column; gap: 6px">
+<h3 style="margin: 0; font-family: 'Archivo Black', sans-serif; font-weight: 400; font-size: 1.45rem; letter-spacing: -0.01em; text-transform: uppercase">Desenhamos a jornada</h3>
+<p style="margin: 0; font-size: 1.1rem; line-height: 1.5; color: #CFCFCF">Cada parte da página responde à próxima dúvida do cliente.</p>
+</div>
+</div>
+
+<div class="rv" style="--i: 4; display: flex; gap: 22px; align-items: baseline; padding: 20px 0; border-top: 1px solid #3A3A3A">
+<div style="font-family: 'Archivo Black', sans-serif; font-size: 2rem; color: #FF5A1F; min-width: 2.2ch">04</div>
+<div style="display: flex; flex-direction: column; gap: 6px">
+<h3 style="margin: 0; font-family: 'Archivo Black', sans-serif; font-weight: 400; font-size: 1.45rem; letter-spacing: -0.01em; text-transform: uppercase">Só prometemos o que é verdade</h3>
+<p style="margin: 0; font-size: 1.1rem; line-height: 1.5; color: #CFCFCF">Nada inventado, tudo com prova.</p>
+</div>
+</div>
+
+<div class="rv" style="--i: 5; display: flex; gap: 22px; align-items: baseline; padding: 20px 0; border-top: 1px solid #3A3A3A">
+<div style="font-family: 'Archivo Black', sans-serif; font-size: 2rem; color: #FF5A1F; min-width: 2.2ch">05</div>
+<div style="display: flex; flex-direction: column; gap: 6px">
+<h3 style="margin: 0; font-family: 'Archivo Black', sans-serif; font-weight: 400; font-size: 1.45rem; letter-spacing: -0.01em; text-transform: uppercase">Você aprova cada etapa</h3>
+<p style="margin: 0; font-size: 1.1rem; line-height: 1.5; color: #CFCFCF">Primeiro o visual, depois a página inteira.</p>
+</div>
+</div>
+
+</div>
+</div>
+</section>
+
+<section data-slide style="position: relative; min-height: min(100vh, 1100px); box-sizing: border-box; display: flex; align-items: center; scroll-snap-align: start; overflow: hidden">
+<div class="slide-body" style="width: 100%; max-width: 1360px; margin: 0 auto; box-sizing: border-box; padding: 112px 24px; display: flex; flex-direction: column; gap: 40px">
+<div class="rv" style="display: flex; flex-wrap: wrap; gap: 16px; align-items: center; justify-content: space-between">
+<h2 style="margin: 0; font-family: 'Archivo Black', sans-serif; font-weight: 400; font-size: clamp(1.6rem, 3vw, 2.6rem); letter-spacing: -0.02em; text-transform: uppercase">Impacto real no seu negócio</h2>
+</div>
+<div style="display: flex; flex-direction: column; gap: 14px">
+
+<div class="rv" style="--i: 1; display: flex; flex-wrap: wrap; gap: 12px 32px; align-items: center; justify-content: space-between; padding: 18px 24px; border-radius: 16px; background: #111111; color: #F3F0E8; transform: rotate(-1deg);">
+<div class="impact-word" style="font-family: 'Archivo Black', sans-serif; font-size: clamp(2.8rem, 8.6vw, 8.2rem); line-height: 0.88; letter-spacing: -0.045em; text-transform: uppercase">Mais rápido</div>
+<p style="margin: 0; font-size: 1.2rem; line-height: 1.45; font-weight: 500; max-width: 30ch">Sua página no ar em dias, não em meses.</p>
+</div>
+
+<div class="rv" style="--i: 2; display: flex; flex-wrap: wrap; gap: 12px 32px; align-items: center; justify-content: space-between; padding: 18px 24px; border-radius: 16px; background: #FF5A1F; color: #111111; transform: rotate(0.8deg);">
+<div class="impact-word" style="font-family: 'Archivo Black', sans-serif; font-size: clamp(2.8rem, 8.6vw, 8.2rem); line-height: 0.88; letter-spacing: -0.045em; text-transform: uppercase">Mais preciso</div>
+<p style="margin: 0; font-size: 1.2rem; line-height: 1.45; font-weight: 500; max-width: 30ch">Cada elemento da página pensado para quem compra de você.</p>
+</div>
+
+<div class="rv" style="--i: 3; display: flex; flex-wrap: wrap; gap: 12px 32px; align-items: center; justify-content: space-between; padding: 18px 24px; border-radius: 16px; background: #FFD23F; color: #111111; transform: rotate(-0.6deg);">
+<div class="impact-word" style="font-family: 'Archivo Black', sans-serif; font-size: clamp(2.8rem, 8.6vw, 8.2rem); line-height: 0.88; letter-spacing: -0.045em; text-transform: uppercase">Mais qualidade</div>
+<p style="margin: 0; font-size: 1.2rem; line-height: 1.45; font-weight: 500; max-width: 30ch">Um visual com a cara da sua marca.</p>
+</div>
+
+</div>
+</div>
+</section>
+
+<section data-slide id="ofertas" class="rounded-band" style="position: relative; background: #FFD23F; min-height: min(100vh, 1100px); box-sizing: border-box; display: flex; align-items: center; scroll-snap-align: start">
+<div class="slide-body" style="width: 100%; max-width: 1360px; margin: 0 auto; box-sizing: border-box; padding: 112px 24px; display: flex; flex-direction: column; gap: 48px">
+<div class="rv" style="display: flex; flex-direction: column; gap: 22px">
+<div style="align-self: flex-start; padding: 6px 12px; background: #111111; color: #F3F0E8; font-weight: 700; font-size: 0.85rem; letter-spacing: 0.08em">OFERTAS</div>
+<h2 style="margin: 0; font-family: 'Archivo Black', sans-serif; font-weight: 400; font-size: clamp(2.6rem, 6vw, 5.6rem); line-height: 0.9; letter-spacing: -0.04em; text-transform: uppercase">Escolha por onde começar a vender</h2>
+</div>
+<div class="swipe-row is-single" data-swipe-x data-start="1" data-arrows style="display: grid; grid-template-columns: repeat(auto-fit, minmax(290px, 1fr)); gap: 18px; align-items: stretch">
+
+<div class="rv" data-tilt style="--i: 1; border-radius: 20px; padding: 28px; display: flex; flex-direction: column; gap: 14px; background: #F3F0E8; color: #111111; margin-top: 72px;">
+<div style="height: 200px; display: flex; align-items: flex-end; justify-content: center; margin-top: -72px">
+<img src="img/agent-marketing.webp" alt="Agente de marketing com megafone" style="max-height: 230px; width: auto; display: block">
+</div>
+<div style="display: flex; justify-content: space-between; align-items: center; gap: 12px">
+
+</div>
+<h3 style="margin: 0; font-family: 'Archivo Black', sans-serif; font-weight: 400; font-size: 1.9rem; line-height: 1; letter-spacing: -0.02em; text-transform: uppercase">Campanhas com IA</h3>
+<p style="margin: 0; line-height: 1.5; font-size: 1.05rem">Imagens para Instagram e outras redes, no estilo da sua marca.</p>
+<ul style="margin: 0; padding: 0 0 0 20px; display: flex; flex-direction: column; gap: 8px; line-height: 1.45">
+
+<li>Imagens para Instagram e outras redes</li>
+
+<li>Posts com a cara da sua marca</li>
+
+<li>Você define a campanha</li>
+
+<li>Prontos para publicar</li>
+
+</ul>
+</div>
+
+<div class="rv" data-tilt style="--i: 2; border-radius: 20px; padding: 28px; display: flex; flex-direction: column; gap: 14px; background: #111111; color: #F3F0E8; margin-top: 72px;">
+<div style="height: 200px; display: flex; align-items: flex-end; justify-content: center; margin-top: -72px">
+<img src="img/agent-design.webp" alt="Agente designer com pincel e paleta" style="max-height: 230px; width: auto; display: block">
+</div>
+<div style="display: flex; justify-content: space-between; align-items: center; gap: 12px">
+
+<div style="font-size: 0.8rem; font-weight: 700; padding: 6px 12px; border-radius: 999px; background: #FF5A1F; color: #111111">Mais procurado</div>
+
+</div>
+<h3 style="margin: 0; font-family: 'Archivo Black', sans-serif; font-weight: 400; font-size: 1.9rem; line-height: 1; letter-spacing: -0.02em; text-transform: uppercase">Landing page</h3>
+<p style="margin: 0; line-height: 1.5; font-size: 1.05rem">Um funil de vendas que transforma visitas em clientes.</p>
+<ul style="margin: 0; padding: 0 0 0 20px; display: flex; flex-direction: column; gap: 8px; line-height: 1.45">
+
+<li>Storytelling e estrutura da oferta</li>
+
+<li>Visual com a identidade da marca</li>
+
+<li>Código, SEO e publicação</li>
+
+<li>Botão direto para o WhatsApp</li>
+
+</ul>
+</div>
+
+<div class="rv" data-tilt style="--i: 3; border-radius: 20px; padding: 28px; display: flex; flex-direction: column; gap: 14px; background: #F3F0E8; color: #111111; margin-top: 72px;">
+<div style="height: 200px; display: flex; align-items: flex-end; justify-content: center; margin-top: -72px">
+<img src="img/agent-dev.webp" alt="Agente desenvolvedor com chave inglesa" style="max-height: 230px; width: auto; display: block">
+</div>
+<div style="display: flex; justify-content: space-between; align-items: center; gap: 12px">
+
+</div>
+<h3 style="margin: 0; font-family: 'Archivo Black', sans-serif; font-weight: 400; font-size: 1.9rem; line-height: 1; letter-spacing: -0.02em; text-transform: uppercase">Assessoria de IA</h3>
+<p style="margin: 0; line-height: 1.5; font-size: 1.05rem">IA no seu negócio para vender mais com o que você já tem.</p>
+<ul style="margin: 0; padding: 0 0 0 20px; display: flex; flex-direction: column; gap: 8px; line-height: 1.45">
+
+<li>Avaliação do seu processo</li>
+
+<li>Onde usar IA</li>
+
+<li>Medição de resultados</li>
+
+</ul>
+</div>
+
+</div>
+</div>
+</section>
+
+<section data-slide id="cases" style="min-height: min(100vh, 1100px); box-sizing: border-box; display: flex; align-items: center; scroll-snap-align: start">
+<div class="slide-body" style="width: 100%; max-width: 1360px; margin: 0 auto; box-sizing: border-box; padding: 112px 24px; display: flex; flex-direction: column; gap: 56px">
+<div style="display: flex; flex-wrap: wrap; gap: 24px; align-items: flex-end; justify-content: space-between">
+<div class="rv" style="display: flex; flex-direction: column; gap: 22px">
+<div style="align-self: flex-start; padding: 6px 12px; background: #111111; color: #F3F0E8; font-weight: 700; font-size: 0.85rem; letter-spacing: 0.08em">CASES</div>
+<h2 style="margin: 0; font-family: 'Archivo Black', sans-serif; font-weight: 400; font-size: clamp(2.6rem, 6vw, 5.6rem); line-height: 0.9; letter-spacing: -0.04em; text-transform: uppercase">Nenhuma página igual à <span class="highlight">outra</span></h2>
+</div>
+<p class="rv" style="--i: 1; margin: 0; font-size: 1.15rem; line-height: 1.5; color: #333333; max-width: 36ch">Cada negócio tem seu público, seu tom e sua cara, e a página também.</p>
+</div>
+<div class="swipe-row" data-swipe-x data-autoplay style="display: grid; grid-template-columns: repeat(auto-fit, minmax(270px, 1fr)); gap: 20px">
+
+<a href="https://teiaativa.com.br/" class="rv" data-tilt style="--i: 1;min-height: 400px; border-radius: 20px; padding: 30px; background: #304B2A; color: #FFFFFF; text-decoration: none; display: flex; flex-direction: column; justify-content: space-between; gap: 24px; transform: rotate(-1.5deg);">
+<div style="font-size: 0.8rem; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: #F36928">Educação socioambiental</div>
+<div style="display: flex; flex-direction: column; gap: 12px">
+<img src="img/case-teia-ativa.svg" alt="Teia Ativa" width="295" height="43" style="display: block; margin-inline: auto; width: 210px; max-width: 100%; height: auto">
+<p style="margin: 0; font-family: Montserrat, sans-serif; font-weight: 700; font-size: min(1.75rem, 12.5cqi); line-height: 1.1; color: #F36928">Conectando educação e transformação</p>
+</div>
+<div style="font-weight: 700">Ver site →</div>
+</a>
+
+<a href="https://orvanno.com.br/" class="rv" data-tilt style="--i: 2;min-height: 400px; border-radius: 20px; padding: 30px; background: #453422; color: #D8C7AA; text-decoration: none; display: flex; flex-direction: column; justify-content: space-between; gap: 24px; transform: rotate(1deg);">
+<div style="font-size: 0.8rem; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: #BB936A">Móveis planejados</div>
+<div style="display: flex; flex-direction: column; gap: 12px">
+<img src="img/case-orvanno.svg" alt="Orvanno" width="200" height="26" style="display: block; margin-inline: auto; width: 200px; max-width: 100%; height: auto">
+<div class="orvanno-slogan" style="font-family: Allison, cursive; font-size: min(2.6rem, 18cqi); line-height: 1; white-space: nowrap; text-align: center; color: #D8C7AA">Sofisticação inteligente</div>
+</div>
+<div style="font-weight: 700">Ver site →</div>
+</a>
+
+<a href="https://marcelo-mattoso.github.io/crm-landing/" class="rv" data-tilt style="--i: 3;min-height: 400px; border-radius: 20px; padding: 30px; background: #0B0B0B; color: #FFFFFF; text-decoration: none; display: flex; flex-direction: column; justify-content: space-between; gap: 24px; transform: rotate(-0.8deg);">
+<div style="font-size: 0.8rem; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: #E8FF1A">Software de CRM</div>
+<div style="display: flex; flex-direction: column; gap: 12px">
+<img src="img/case-forja.webp" alt="CRM Forja" width="480" height="160" style="display: block; margin-inline: auto; width: 210px; max-width: 100%; height: auto">
+<p style="margin: 0; font-family: Anton, Impact, sans-serif; font-size: min(2.3rem, 21cqi); line-height: 1.05; text-transform: uppercase; color: #E8FF1A">Transforme leads em resultados</p>
+</div>
+<div style="font-weight: 700">Ver site →</div>
+</a>
+
+<a href="https://println.github.io/fiezta-d1/" class="rv" data-tilt style="--i: 4;min-height: 400px; border-radius: 20px; padding: 30px; background: #000913; color: #FFFFFF; text-decoration: none; display: flex; flex-direction: column; justify-content: space-between; gap: 24px; transform: rotate(1.6deg);">
+<div style="font-size: 0.8rem; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: #01E4FD">App para Android Auto</div>
+<div style="display: flex; flex-direction: column; gap: 12px">
+<img src="img/case-fiezta-d1.svg" alt="Fiezta D1" width="1800" height="650" style="display: block; margin-inline: auto; width: 180px; max-width: 100%; height: auto">
+<div style="font-family: 'Archivo Black', sans-serif; font-size: min(1.6rem, 17cqi); line-height: 0.95; text-transform: uppercase; color: #F903A9">Mais estrada.<br><span style="color: #01E4FD">Menos limites.</span></div>
+</div>
+<div style="font-weight: 700">Ver site →</div>
+</a>
+
+</div>
+</div>
+</section>
+
+<section data-slide id="avaliacao" class="rounded-band" style="position: relative; background: #111111; color: #F3F0E8; min-height: min(100vh, 1100px); box-sizing: border-box; display: flex; align-items: center; scroll-snap-align: start; overflow: hidden">
+<div class="marquee" aria-hidden="true" style="position: absolute; left: -5%; right: -5%; top: 48px; transform: rotate(-3deg); background: #FF5A1F; color: #111111; padding: 12px 0; white-space: nowrap; overflow: hidden; font-family: 'Archivo Black', sans-serif; font-size: clamp(1rem, 1.6vw, 1.35rem); letter-spacing: 0.04em"><div class="marquee-track" style="--duration: 45s"><span>AVALIAÇÃO ✦ AVALIAÇÃO ✦ AVALIAÇÃO ✦ AVALIAÇÃO ✦ AVALIAÇÃO ✦ AVALIAÇÃO ✦ AVALIAÇÃO ✦ AVALIAÇÃO ✦ AVALIAÇÃO ✦ AVALIAÇÃO ✦ AVALIAÇÃO ✦ AVALIAÇÃO ✦&nbsp;</span><span>AVALIAÇÃO ✦ AVALIAÇÃO ✦ AVALIAÇÃO ✦ AVALIAÇÃO ✦ AVALIAÇÃO ✦ AVALIAÇÃO ✦ AVALIAÇÃO ✦ AVALIAÇÃO ✦ AVALIAÇÃO ✦ AVALIAÇÃO ✦ AVALIAÇÃO ✦ AVALIAÇÃO ✦&nbsp;</span></div></div>
+<div style="position: relative; width: 100%; max-width: 1360px; margin: 0 auto; box-sizing: border-box; padding: 160px 24px 112px; display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 48px; align-items: center">
+<div class="rv" style="display: flex; flex-direction: column; gap: 22px">
+<h2 style="margin: 0; font-family: 'Archivo Black', sans-serif; font-weight: 400; font-size: clamp(3rem, 7vw, 6.6rem); line-height: 0.88; letter-spacing: -0.045em; text-transform: uppercase">Avaliação</h2>
+</div>
+<div class="rv" style="--i: 1; min-height: 360px; border-radius: 20px; border: 2px dashed #6B6B6B; display: flex; align-items: center; justify-content: center; padding: 32px; text-align: center; font-size: 1.2rem; color: #BDBDBD">[Formulário de avaliação]</div>
+</div>
+</section>
+
+<footer style="max-width: 1360px; margin: 0 auto; padding: 28px 24px; scroll-snap-align: end; display: flex; flex-wrap: wrap; gap: 12px; justify-content: space-between; align-items: baseline">
+<div style="font-family: 'Archivo Black', sans-serif; letter-spacing: 0.02em">CRAFTOMAKERS</div>
+<div style="color: #444444">Inteligências artesanais, crescimento orquestrado</div>
+</footer>
+
+</div>
+<nav class="slide-nav" data-slide-nav aria-label="Navegar entre as seções" hidden>
+<button type="button" data-slide-prev aria-label="Seção anterior"><svg aria-hidden="true" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M12 19V5"></path><path d="M6 11l6-6 6 6"></path></svg></button>
+<button type="button" data-slide-next aria-label="Próxima seção"><svg aria-hidden="true" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14"></path><path d="M6 13l6 6 6-6"></path></svg></button>
+</nav>
+<script src="js/vendor/gsap.min.js" defer></script>
+<script src="js/vendor/Observer.min.js" defer></script>
+<script src="js/slides.js" defer></script>
+<script src="js/reveal.js" defer></script>
+<script src="js/carousel.js" defer></script>
+<script src="js/tilt.js" defer></script>
 </body>
 </html>
