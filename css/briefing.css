@@ -1,0 +1,385 @@
+/* Só da página do briefing. */
+
+/* O deck: a página não rola; cada slide ocupa a tela e o outro espera fora dela. */
+html:has(.bf-deck), body:has(.bf-deck) { height: 100%; overflow: hidden; }
+
+.bf-deck {
+  position: relative;
+  height: 100vh;
+  height: 100svh;
+  overflow: hidden;
+}
+
+.bf-slide {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  transition: transform .6s cubic-bezier(.45, 0, .55, 1), visibility .6s;
+}
+
+.bf-quiz { transform: translateY(100%); visibility: hidden; }
+.bf-deck[data-slide="1"] .bf-intro { transform: translateY(-100%); visibility: hidden; }
+.bf-deck[data-slide="1"] .bf-quiz { transform: none; visibility: visible; }
+
+.bf-top {
+  display: flex;
+  flex: none;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding-block: 18px;
+}
+
+.bf-back { min-height: 44px; padding: 0 18px; }
+.bf-brand { font-family: var(--font-display); letter-spacing: 0.02em; text-decoration: none; }
+
+/* Slide 1: título e as três fases, centralizados na altura que sobra. */
+.bf-intro .bf-hero {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  justify-content: center;
+  gap: clamp(14px, 2.6vh, 24px);
+  min-height: 0;
+  padding-bottom: clamp(24px, 6vh, 72px);
+}
+
+.bf-intro .display { font-size: clamp(2.4rem, min(6vw, 9vh), 5.6rem); }
+/* Apagar tudo: discreto, no canto, sem destaque. */
+/* Editar (abre um PDF baixado daqui) e Apagar, centralizados abaixo das fases. */
+.bf-tools { display: flex; flex-wrap: wrap; justify-content: center; gap: 12px; margin-top: clamp(8px, 2vh, 20px); }
+.bf-tool { min-height: 44px; cursor: pointer; }
+.bf-tool:focus-visible { outline: 3px solid var(--orange); outline-offset: 3px; }
+.bf-tool[data-armed] { border-color: var(--orange); color: var(--orange); }
+.bf-tool[hidden], .bf-tools-hint[hidden] { display: none; }
+.bf-tools-hint { margin: 0; color: var(--text-faint); font-size: 0.85rem; text-align: center; }
+.bf-levels { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; margin-top: clamp(4px, 2vh, 20px); }
+
+.bf-level-card {
+  position: relative;
+  display: grid;
+  width: 100%;
+  padding: 0;
+  overflow: hidden;
+  border: 3px solid transparent;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+  transition: transform .22s, border-color .22s, background-color .22s, color .22s;
+}
+
+/* O conteúdo da caixa. */
+.bf-card-in { position: relative; display: flex; flex-direction: column; gap: 8px; padding: 28px 88px 28px 28px; }
+
+
+.bf-level-card:hover { transform: translateY(-4px); }
+.bf-level-card:focus-visible { outline: 3px solid var(--orange); outline-offset: 8px; }
+.bf-level-num { font-family: var(--font-display); font-size: clamp(1.8rem, 5vh, 2.6rem); line-height: 1; }
+.bf-level-name { font-family: var(--font-display); font-size: 1.5rem; letter-spacing: -0.02em; text-transform: uppercase; }
+.bf-level-card:not(.is-done):not(:hover):not(:focus-visible) { border-color: var(--ink); background: transparent; color: var(--ink); }
+
+/* O anel de progresso, no canto da caixa, com a porcentagem no meio. */
+.bf-ring { position: absolute; top: 20px; right: 20px; display: grid; place-items: center; width: 56px; height: 56px; }
+.bf-ring svg { position: absolute; inset: 0; width: 100%; height: 100%; transform: rotate(-90deg); }
+.bf-ring circle { fill: none; stroke: currentColor; stroke-width: 4; }
+.bf-ring-track { opacity: .2; }
+.bf-ring .bf-ring-fill { stroke: var(--green); stroke-linecap: round; transition: stroke-dasharray .4s ease; }
+.bf-ring > span { font-size: 0.8rem; font-weight: 700; font-variant-numeric: tabular-nums; }
+
+/* Partes, pergunta e barra; só a pergunta rola, se for maior que o espaço. */
+.bf-body {
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr);
+  flex: 1;
+  gap: 16px;
+  min-height: 0;
+  padding-block: 16px;
+  border-top: 2px solid var(--ink);
+}
+
+.bf-main { display: flex; flex-direction: column; min-height: 0; }
+.bf-form { flex: 1; min-height: 0; overflow-y: auto; overscroll-behavior: contain; padding: 4px 4px 8px; margin: -4px; }
+
+.bf-steps { margin-inline: calc(var(--gutter) * -1); overflow-x: auto; scrollbar-width: none; }
+.bf-steps::-webkit-scrollbar { display: none; }
+.bf-steps-list { display: flex; gap: 8px; width: max-content; margin: 0; padding: 0 var(--gutter); list-style: none; }
+
+.bf-step {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  width: 100%;
+  min-height: 40px;
+  padding: 0 16px;
+  border: 2px solid var(--ink);
+  border-radius: 999px;
+  background: transparent;
+  color: var(--ink);
+  font: 600 0.9rem/1.2 var(--font-body);
+  white-space: nowrap;
+  cursor: pointer;
+}
+
+.bf-step:hover { background: rgba(17, 17, 17, .08); }
+.bf-step:disabled { opacity: .4; cursor: default; }
+.bf-step:disabled:hover { background: transparent; }
+.bf-step[aria-current="step"] { background: var(--ink); color: var(--paper); }
+.bf-step-count { font-size: 0.8rem; font-variant-numeric: tabular-nums; opacity: .7; }
+.bf-step-name { display: flex; align-items: center; gap: 10px; }
+.bf-step-mark {
+  display: grid;
+  place-items: center;
+  width: 20px;
+  height: 20px;
+  flex: none;
+  box-sizing: border-box;
+  border: 2px solid rgba(17, 17, 17, .3);
+  border-radius: 50%;
+  font-size: 0.7rem;
+  font-weight: 700;
+  line-height: 1;
+}
+.bf-step.is-done:not([aria-current]) { background: var(--yellow); }
+.bf-step.is-done .bf-step-mark { border-color: var(--ink); background: var(--ink); color: var(--yellow); }
+.bf-step[aria-current="step"].is-done .bf-step-mark { background: var(--yellow); color: var(--ink); border-color: var(--yellow); }
+.bf-step[aria-current="step"] .bf-step-mark { border-color: var(--paper); }
+
+.bf-panel { display: flex; flex-direction: column; gap: 6px; }
+.bf-panel[hidden] { display: none; }
+.bf-panel-hint { margin: 0; font-size: 1.05rem; line-height: 1.5; color: var(--text-soft); }
+
+/* Uma pergunta por vez, grande, entrando de baixo. */
+.bf-question { display: none; padding-top: clamp(12px, 3vh, 32px); }
+.bf-question.is-current { display: grid; gap: clamp(10px, 2vh, 18px); animation: bf-in .45s cubic-bezier(.22, 1, .36, 1); }
+.bf-question-title { font-size: clamp(1.25rem, 2.4vw, 1.75rem); font-weight: 600; line-height: 1.3; letter-spacing: -0.01em; }
+.bf-question-num { margin-right: 10px; color: var(--orange); font-size: 0.8em; font-weight: 700; white-space: nowrap; }
+/* Pergunta opcional: número cinza e texto mais claro. */
+.bf-question.is-optional .bf-question-num { color: #9A9A9A; }
+.bf-question.is-optional .bf-question-title { color: #6B6B6B; }
+.bf-question .input { font-size: 1.15rem; }
+.bf-question-head { display: flex; align-items: flex-start; gap: 10px; }
+.bf-help { display: grid; place-items: center; width: 28px; height: 28px; flex: none; margin-top: 2px; padding: 0; border: 2px solid var(--ink); border-radius: 50%; background: transparent; color: var(--ink); font: 700 0.9rem var(--font-body); cursor: pointer; }
+.bf-help:hover, .bf-help[aria-expanded="true"] { background: var(--ink); color: var(--paper); }
+.bf-help:focus-visible { outline: 3px solid var(--orange); outline-offset: 2px; }
+/* A ajuda não pode parecer campo: fundo amarelo claro, sem borda, faixa laranja do lado e letra menor. */
+.bf-help-box { display: grid; gap: 4px; margin: 0; padding: 12px 16px 12px 32px; border: 0; border-left: 4px solid var(--orange); border-radius: 4px 12px 12px 4px; background: rgba(255, 210, 63, .28); color: var(--text-soft); font-size: 0.88rem; line-height: 1.45; }
+.bf-help-box[hidden] { display: none; }
+
+/* Pares de campos: nome e link lado a lado, com o X; no celular, um embaixo do outro. */
+.pair-list { display: grid; gap: 8px; }
+.pair { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.3fr) 32px; align-items: center; gap: 8px; }
+.pair .input { font-size: 1rem; }
+.pair select.input { appearance: none; padding-right: 36px; background: #FFFFFF url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23111' stroke-width='2.4'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E") no-repeat right 12px center / 16px; cursor: pointer; }
+.pair .pair-remove { position: static; width: 32px; height: 32px; border-color: var(--ink); }
+.pair-add { justify-self: start; }
+.pair.is-invalid .pair-b { border-color: var(--orange); box-shadow: 0 0 0 1px var(--orange); }
+.pair-error { grid-column: 1 / -1; margin: -2px 0 4px; color: var(--orange); font-size: 0.85rem; font-weight: 600; }
+.pair-error[hidden] { display: none; }
+@media (max-width: 480px) { .pair { grid-template-columns: minmax(0, 1fr) 32px; } .pair .pair-b { grid-column: 1; } }
+
+/* Várias respostas em etiquetas (as cidades). */
+.bf-chips { display: flex; flex-wrap: wrap; gap: 8px; }
+.bf-chips:empty { display: none; }
+.bf-chip { display: inline-flex; align-items: center; gap: 6px; padding: 6px 6px 6px 14px; border-radius: 999px; background: var(--ink); color: var(--paper); font-size: 0.9rem; font-weight: 600; }
+.bf-chip button { display: grid; place-items: center; width: 22px; height: 22px; padding: 0; border: 0; border-radius: 50%; background: var(--paper); color: var(--ink); cursor: pointer; }
+.bf-chip button svg { width: 12px; height: 12px; }
+.color-modal-use { font-size: 1rem; }
+/* Muitas opções cabem na tela em duas colunas, sem rolar a pergunta. */
+.bf-question .choice-list { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 300px), 1fr)); gap: 8px; }
+.bf-question .choice, .bf-question .choice-text { width: 100%; }
+.bf-question .choice-text { min-height: 40px; padding-block: 6px; }
+
+@media (max-height: 760px) {
+  .bf-question .choice-list { grid-template-columns: repeat(auto-fill, minmax(min(100%, 220px), 1fr)); }
+  .bf-panel .display-sm { font-size: 1.5rem; }
+  .bf-panel-hint { display: none; }
+}
+.bf-question .choice-text { gap: 12px; padding-left: 8px; border-radius: 14px; }
+.bf-question .choice-input:checked + .choice-text::after { content: "✓"; margin-left: 4px; }
+
+.choice-key {
+  display: inline-grid;
+  place-items: center;
+  width: 26px;
+  height: 26px;
+  flex: none;
+  border: 1.5px solid currentColor;
+  border-radius: 6px;
+  font-size: 0.75rem;
+  font-weight: 700;
+}
+
+.choice-input:checked + .choice-text .choice-key { background: var(--paper); color: var(--ink); border-color: var(--paper); }
+
+.bf-pager { display: flex; flex: none; justify-content: space-between; gap: 12px; padding-top: 12px; }
+.bf-pager [hidden] { display: none; }
+.bf-next { display: flex; align-items: center; gap: 14px; }
+.bf-enter { font-size: 0.85rem; color: var(--text-faint); }
+.bf-enter[hidden] { display: none; }
+.bf-need { color: var(--orange); font-size: 0.85rem; font-weight: 600; }
+.bf-need:empty { display: none; }
+#next.is-blocked { opacity: .45; }
+.bf-enter kbd { font: 700 0.8rem var(--font-body); }
+
+.bf-send { display: grid; gap: 24px; justify-items: start; margin-top: clamp(16px, 4vh, 40px); }
+.bf-send-actions { display: flex; flex-wrap: wrap; gap: 12px; }
+
+/* Revisão no Enviar: pergunta e resposta, por fase e família; clicar volta para a pergunta. */
+.bf-review { display: grid; gap: 28px; width: 100%; padding-bottom: 24px; }
+
+/* Rascunho da oferta no Resultado: cartão de borda preta, antes das respostas. */
+.bf-offer { display: grid; gap: 14px; padding: 20px; border: 2px solid var(--ink); border-radius: var(--radius-card); background: #FFFFFF; }
+.bf-offer .bf-part-tag { margin: 0; }
+.bf-offer-hero { display: grid; gap: 4px; padding-bottom: 14px; border-bottom: 2px solid var(--ink); }
+.bf-offer-kicker { color: var(--text-faint); font-size: 0.7rem; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; }
+.bf-offer-h1 { margin: 0 0 8px; font-family: var(--font-display); font-size: clamp(1.4rem, 3vw, 2rem); line-height: 1.1; text-transform: uppercase; }
+.bf-offer-h2 { margin: 0; font-size: 1.05rem; line-height: 1.4; }
+.bf-offer-block h4 { margin: 0 0 6px; font-family: var(--font-display); font-size: 1rem; text-transform: uppercase; }
+.bf-offer-block ul { display: grid; gap: 4px; margin: 0; padding-left: 18px; }
+.bf-offer-block li { line-height: 1.45; }
+.bf-offer-missing h4, .bf-offer-missing li::marker { color: var(--orange); }
+.bf-offer-note { margin: 0; color: var(--text-faint); font-size: 0.85rem; font-style: italic; }
+.bf-review-phase { display: grid; gap: 6px; }
+.bf-review-family { margin: 10px 0 2px; font-family: var(--font-display); font-size: 1.1rem; text-transform: uppercase; }
+.bf-review dl { display: grid; margin: 0; border-top: 2px solid var(--ink); }
+.bf-review-item { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.2fr); gap: 16px; padding: 10px 8px; border-bottom: 1px solid rgba(17, 17, 17, .15); cursor: pointer; }
+.bf-review-item:hover, .bf-review-item:focus-visible { background: rgba(17, 17, 17, .06); outline: none; }
+.bf-review dt { color: var(--text-soft); font-size: 0.9rem; }
+.bf-review dt .bf-question-num { margin-right: 8px; font-size: 0.85em; }
+.bf-review dd { display: flex; flex-wrap: wrap; gap: 6px 12px; margin: 0; font-weight: 600; overflow-wrap: anywhere; }
+.bf-review-empty { color: var(--text-faint); font-weight: 400; font-style: italic; }
+.bf-review-color { display: inline-flex; align-items: center; gap: 6px; }
+.bf-review-color span { width: 16px; height: 16px; border: 1px solid var(--ink); border-radius: 4px; }
+@media (max-width: 767px) { .bf-review-item { grid-template-columns: 1fr; gap: 4px; } }
+
+/* Progresso: o número no topo e uma linha fina no lugar da borda, sem barra embaixo. */
+.bf-count { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; text-align: center; font-size: 0.85rem; font-weight: 600; }
+.bf-msg { color: var(--text-faint); font-weight: 400; }
+.bf-track { flex: none; height: 4px; background: rgba(17, 17, 17, .15); }
+.bf-fill { display: block; width: 0; height: 100%; background: var(--orange); transition: width .3s ease; }
+.bf-quiz .bf-body { border-top: 0; }
+
+@keyframes bf-in { from { opacity: 0; transform: translateY(24px); } }
+
+@media (max-width: 767px) {
+  .bf-top { padding-block: 12px; }
+  .bf-msg, .bf-download-text { display: none; }
+  .bf-quiz .bf-back { padding: 0 14px; }
+  .bf-body { gap: 10px; padding-block: 12px; }
+  .bf-panel .display-sm { font-size: 1.4rem; }
+  .bf-panel-hint { font-size: 0.95rem; }
+  .bf-question-title { font-size: 1.15rem; }
+  .bf-levels { grid-template-columns: 1fr; gap: 10px; }
+  .bf-card-in { display: grid; grid-template-columns: auto 1fr; align-items: baseline; gap: 2px 14px; padding: 14px 76px 14px 20px; }
+  .bf-level-num { grid-row: span 2; font-size: 1.8rem; }
+  .bf-ring { top: 50%; right: 14px; width: 48px; height: 48px; transform: translateY(-50%); }
+  .bf-level-name { font-size: 1.2rem; }
+  /* As bolinhas ganham uma linha só delas, acima de Anterior e Próxima. */
+  .bf-pager { flex-wrap: wrap; row-gap: 10px; }
+  .bf-dots { order: -1; width: 100%; }
+  /* Opções curtas em duas colunas, para a pergunta caber sem rolar. */
+  .bf-question .choice-list { grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 6px; }
+  .bf-question .choice-text { min-height: 38px; padding: 6px 10px; font-size: 0.88rem; }
+  .bf-question.is-current { gap: 12px; }
+  /* Sem a lista das famílias: a pessoa só vai passando, e o rótulo mostra em que fase está. */
+  .bf-steps { display: none; }
+  .bf-body { grid-template-rows: minmax(0, 1fr); }
+  .bf-ring { width: 52px; height: 52px; }
+  .bf-ring > span { font-size: 0.68rem; }
+  .bf-card-in { padding-right: 80px; }
+  /* A primeira tela rola se o celular for baixo. */
+  .bf-intro .bf-hero { justify-content: flex-start; overflow-y: auto; padding-top: 8px; }
+}
+
+/* Celular baixo: menos espaço em volta, para a pergunta caber. */
+@media (max-width: 767px) and (max-height: 720px) {
+  .bf-panel > .display-sm { font-size: 1.2rem; }
+  .bf-question { padding-top: 4px; }
+  .bf-question .choice-text { min-height: 34px; padding-block: 4px; }
+  .bf-body { padding-block: 8px; }
+}
+
+@media (min-width: 1024px) {
+  .bf-body { grid-template-columns: 280px minmax(0, 760px); grid-template-rows: minmax(0, 1fr); gap: 56px; padding-block: 32px 24px; }
+  .bf-steps { margin-inline: 0; overflow-y: auto; }
+  .bf-steps-list { display: grid; width: auto; padding: 0; }
+}
+
+@media (pointer: coarse) {
+  .bf-enter, .choice-key { display: none; }
+  .bf-question .choice-text { padding-left: 16px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .bf-slide, .bf-level-card, .bf-fill { transition: none; }
+  .bf-question.is-current { animation: none; }
+}
+
+/* Marcadores das perguntas da parte, discretos entre Anterior e Próxima: ✓ quando respondida, laranja na atual. */
+.bf-pager { align-items: center; }
+.bf-dots { display: flex; flex-wrap: wrap; justify-content: center; gap: 6px; min-width: 0; margin: 0; padding: 0; list-style: none; }
+.bf-dot {
+  display: grid;
+  place-items: center;
+  min-width: 32px;
+  height: 32px;
+  padding: 0 8px;
+  border: 2px solid rgba(17, 17, 17, .25);
+  border-radius: 999px;
+  background: transparent;
+  color: var(--ink);
+  font: 700 0.8rem/1 var(--font-body);
+  cursor: pointer;
+}
+.bf-dot.is-done { border-color: var(--ink); background: var(--ink); color: var(--paper); }
+.bf-dot[aria-current="step"] { border-color: var(--orange); color: var(--orange); }
+.bf-dot.is-done[aria-current="step"] { background: var(--orange); color: var(--paper); }
+.bf-dot:hover { border-color: var(--ink); }
+.bf-enter { white-space: nowrap; }
+
+/* Sugestões enquanto digita: uma lista colada no campo, com a mesma borda e as mesmas cores. */
+.bf-combo { position: relative; }
+.bf-options {
+  position: absolute;
+  top: calc(100% + 6px);
+  left: 0;
+  right: 0;
+  z-index: 5;
+  display: grid;
+  gap: 2px;
+  max-height: min(320px, 40vh);
+  margin: 0;
+  padding: 6px;
+  overflow-y: auto;
+  border: 2px solid var(--ink);
+  border-radius: 14px;
+  background: #FFFFFF;
+  list-style: none;
+  box-shadow: 0 10px 24px rgba(17, 17, 17, .12);
+}
+.bf-options[hidden] { display: none; }
+.bf-option { padding: 10px 12px; border-radius: 10px; font: 500 1rem/1.3 var(--font-body); cursor: pointer; }
+.bf-option:hover { background: rgba(17, 17, 17, .08); }
+.bf-option.is-active { background: var(--ink); color: var(--paper); }
+
+/* As partes: o nome no topo de cada família e um rótulo na lista do lado. A posição da família na
+   fase (2/4) só aparece no celular, onde não há a lista do lado. */
+.bf-part-pos { display: none; margin-left: 4px; padding: 2px 9px; border: 0; border-radius: 999px; background: var(--ink); color: var(--paper); font: inherit; letter-spacing: inherit; cursor: pointer; }
+.bf-part-pos::after { content: " ▾"; }
+
+/* Menu de tela cheia do celular: todos os grupos, por fase, para escolher qual preencher. */
+.bf-menu { position: absolute; inset: 0; z-index: 10; display: flex; flex-direction: column; gap: 12px; padding: 16px var(--gutter) 0; overflow: hidden; background: var(--paper); animation: bf-in .3s cubic-bezier(.22, 1, .36, 1); }
+.bf-menu[hidden] { display: none; }
+/* O topo com o fechar fica parado; só a lista dos grupos rola. */
+.bf-menu-top { display: flex; flex: none; align-items: center; justify-content: space-between; }
+.bf-menu-top .bf-part-tag { margin: 0; }
+.bf-menu-list { display: grid; flex: 1; align-content: start; gap: 8px; width: auto; min-height: 0; overflow-y: auto; padding: 0 0 24px; }
+.bf-menu-list .bf-step { min-height: 48px; font-size: 1rem; }
+.bf-menu-list .bf-part:not(:first-child) { margin-top: 12px; margin-left: 0; }
+@media (max-width: 767px) { .bf-part-pos { display: inline-block; } }
+.bf-part-tag { margin: 0 0 6px; color: var(--orange); font-size: 0.85rem; font-weight: 700; letter-spacing: 0.02em; text-transform: uppercase; }
+.bf-part { display: flex; align-items: center; padding: 0 4px; color: var(--text-faint); font-size: 0.75rem; font-weight: 700; letter-spacing: 0.04em; text-transform: uppercase; white-space: nowrap; }
+.bf-part:not(:first-child) { margin-top: 10px; }
+@media (max-width: 1023px) { .bf-part:not(:first-child) { margin-top: 0; margin-left: 8px; } }

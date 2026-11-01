@@ -1,0 +1,83 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Briefing – Craftomakers</title>
+<meta name="description" content="Conte sobre o seu negócio no briefing da Craftomakers, em três fases.">
+<meta name="robots" content="noindex">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Archivo+Black&amp;family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/tokens.css">
+<link rel="stylesheet" href="css/components.css">
+<link rel="stylesheet" href="css/vendor/pickr-nano.min.css">
+<link rel="stylesheet" href="css/briefing.css">
+<script src="js/vendor/pickr.min.js" defer></script>
+<script type="module" src="js/briefing.js"></script>
+</head>
+<body>
+<svg aria-hidden="true" style="position: absolute; width: 0; height: 0">
+<symbol id="icon-back" viewBox="0 0 24 24"><path d="M19 12H5M11 6l-6 6 6 6"/></symbol>
+<symbol id="icon-up" viewBox="0 0 24 24"><path d="M12 19V5M6 11l6-6 6 6"/></symbol>
+<symbol id="icon-next" viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></symbol>
+<symbol id="icon-result" viewBox="0 0 24 24"><path d="M7 3h7l4 4v14H7zM14 3v4h4M10 12h5M10 16h5"/></symbol>
+<symbol id="icon-upload" viewBox="0 0 24 24"><path d="M12 15V4M7 9l5-5 5 5M5 20h14"/></symbol>
+<symbol id="icon-download" viewBox="0 0 24 24"><path d="M12 4v11M7 10l5 5 5-5M5 20h14"/></symbol>
+<symbol id="icon-plus" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></symbol>
+<symbol id="icon-close" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></symbol>
+</svg>
+
+<!-- Dois slides de tela cheia, como o site principal: as três fases e as perguntas, uma por vez. -->
+<div class="page bf-deck" id="deck" data-slide="0">
+
+<section class="bf-slide bf-intro" id="intro" aria-label="Fases do briefing">
+<header class="wrap bf-top">
+<a class="pill bf-back" href="index.html"><svg class="icon" aria-hidden="true"><use href="#icon-back"/></svg>Voltar</a>
+<a class="bf-brand" href="index.html">CRAFTO<span style="color: var(--orange)">M</span>AKERS</a>
+</header>
+<div class="wrap bf-hero">
+<h1 class="display">Conte sobre o seu <span class="highlight">negócio</span></h1>
+<p class="bf-panel-hint">Três fases. Faça uma de cada vez: fica salvo neste navegador.</p>
+<div class="bf-levels" id="phases"></div>
+<div class="bf-tools">
+<label class="pill pill-dark bf-tool" tabindex="0"><svg class="icon" aria-hidden="true"><use href="#icon-upload"/></svg>Ajustar meu briefing<input type="file" id="open-pdf" accept="application/pdf,.pdf" hidden></label>
+<button class="pill bf-tool" type="button" data-action="reset"><svg class="icon" aria-hidden="true"><use href="#icon-close"/></svg><span>Limpar respostas</span></button>
+</div>
+<p class="bf-tools-hint">Já respondeu? Escolha o PDF que baixou e ajuste o que quiser.</p>
+</div>
+</section>
+
+<section class="bf-slide bf-quiz" id="quiz" aria-label="Perguntas">
+<header class="wrap bf-top">
+<button class="pill bf-back" type="button" data-action="phases"><svg class="icon" aria-hidden="true"><use href="#icon-up"/></svg><span id="phase-name">Fases</span></button>
+<span class="bf-count"><span id="count">0</span><span class="bf-msg"> · <span id="msg">salvo neste navegador</span></span></span>
+<button class="pill bf-back" type="button" data-action="result" aria-label="Resultado"><svg class="icon" aria-hidden="true"><use href="#icon-result"/></svg><span class="bf-download-text">Resultado</span></button>
+</header>
+<div class="bf-track" aria-hidden="true"><span class="bf-fill" id="fill"></span></div>
+<div class="color-modal" id="color-modal" role="dialog" aria-modal="true" aria-labelledby="color-modal-title" hidden>
+<div class="color-modal-box">
+<div class="color-modal-top"><div><p class="bf-part-tag" id="color-modal-role">Primária</p><h2 class="display display-sm" id="color-modal-title">Escolha a cor</h2></div><button class="pill bf-back" type="button" data-color-close aria-label="Fechar"><svg class="icon" aria-hidden="true"><use href="#icon-close"/></svg></button></div>
+<input class="input color-modal-use" id="color-modal-use" type="text" placeholder="Para que serve? (opcional) Ex.: botões" aria-label="Para que serve a cor (opcional)">
+<div id="color-picker"></div>
+</div>
+</div>
+<div class="bf-menu" id="menu" role="dialog" aria-modal="true" aria-label="Grupos do briefing" hidden>
+<div class="bf-menu-top"><span class="bf-part-tag">Escolha o grupo</span><button class="pill bf-back" type="button" data-action="menu-close" aria-label="Fechar"><svg class="icon" aria-hidden="true"><use href="#icon-close"/></svg></button></div>
+<ol class="bf-steps-list bf-menu-list" id="menu-list"></ol>
+</div>
+<main class="wrap bf-body">
+<nav class="bf-steps" aria-label="Partes do briefing"><ol class="bf-steps-list" id="steps"></ol></nav>
+<div class="bf-main">
+<form class="bf-form" id="form" autocomplete="off"></form>
+<div class="bf-pager">
+<button class="pill" type="button" id="prev"><svg class="icon" aria-hidden="true"><use href="#icon-back"/></svg>Anterior</button>
+<ol class="bf-dots" id="dots" aria-label="Perguntas desta parte"></ol>
+<span class="bf-next"><span class="bf-need" id="need" role="status"></span><span class="bf-enter" id="enter">ou <kbd>Enter ↵</kbd></span><button class="pill pill-dark" type="button" id="next"><span id="next-text">Próxima</span><svg class="icon" aria-hidden="true"><use href="#icon-next"/></svg></button></span>
+</div>
+</div>
+</main>
+</section>
+
+</div>
+</body>
+</html>
