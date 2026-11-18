@@ -1,0 +1,1339 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light">
+<meta name="theme-color" content="#F3F0E8">
+<title>Monte sua landing page</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo+Black&amp;family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet">
+<style>
+/* Cores com papel: papel e tinta são a base. Amarelo em três papéis: o check do item
+   marcado, a faixa animada do total e o selo de desconto. Laranja (o do site) só no número
+   dos passos, no ponto do "Parecido com" marcado e no botão de ação; nunca em preço.
+   Texto sobre laranja é tinta: branco dá 3,1:1 (reprova AA), tinta dá 6,0:1. */
+:root {
+  --paper: #F3F0E8;
+  --paper-2: #EAE6DA;
+  --ink: #111111;
+  --white: #FFFFFF;
+  --yellow: #FFD23F;
+  --orange: #FF5A1F;
+  --orange-hover: #FF7440;
+  --muted: #4A4A4A;
+  --line: rgba(17, 17, 17, 0.14);
+  --line-strong: rgba(17, 17, 17, 0.4);
+  --line-control: rgba(17, 17, 17, 0.56); /* contorno de controle: 3:1 sobre branco */
+  --hover: rgba(17, 17, 17, 0.03);
+  --display: "Archivo Black", system-ui, sans-serif;
+  --text: Inter, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  /* Tipo em 4 níveis. */
+  --fs-1: 2rem;
+  --fs-2: 1.25rem;
+  --fs-3: 1rem;
+  --fs-4: 0.875rem;
+  /* Espaçamento em 6 níveis. */
+  --s1: 4px;
+  --s2: 8px;
+  --s3: 12px;
+  --s4: 16px;
+  --s5: 24px;
+  --s6: 40px;
+  /* Raios em 4 níveis; o de cartão é o --radius-card do site. */
+  --r-card: 20px;
+  --r: 12px;
+  --r-sm: 8px;
+  --r-pill: 999px;
+  --bar-h: 120px; /* barra do celular: linha do total (44) + botão (48) + respiros */
+  --ease: cubic-bezier(.22, 1, .36, 1);
+  --spring: cubic-bezier(.34, 1.56, .64, 1);
+  /* Ícone "check" do Lucide (ISC). */
+  --check-ink: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23111111' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M20 6 9 17l-5-5'/%3E%3C/svg%3E");
+  --check-ink-thin: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23111111' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M20 6 9 17l-5-5'/%3E%3C/svg%3E");
+  --check-yellow: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23FFD23F' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M20 6 9 17l-5-5'/%3E%3C/svg%3E");
+}
+*, *::before, *::after { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; scroll-behavior: smooth; scroll-padding-bottom: calc(var(--bar-h) + var(--s4)); }
+body {
+  margin: 0;
+  background: var(--paper);
+  color: var(--ink);
+  font-family: var(--text);
+  font-size: var(--fs-3);
+  line-height: 1.5;
+  overflow-x: hidden;
+  padding-bottom: calc(var(--bar-h) + var(--s5));
+}
+:focus-visible { outline: 3px solid var(--ink); outline-offset: 3px; }
+button, input, summary { -webkit-tap-highlight-color: transparent; }
+::selection { background: var(--ink); color: var(--paper); }
+h1, h2 { font-family: var(--display); font-weight: 400; line-height: 1.1; letter-spacing: -0.03em; text-transform: uppercase; margin: 0; text-wrap: balance; }
+h3 { margin: 0; font: inherit; }
+.wrap { max-width: 1200px; margin: 0 auto; padding: var(--s5) var(--s4) var(--s6); }
+h1 { font-size: clamp(2.6rem, 6vw, 5.6rem); line-height: 0.9; letter-spacing: -0.04em; margin-bottom: var(--s5); }
+/* Grifo laranja atrás da palavra, como no título do briefing e do site. */
+.highlight { background: linear-gradient(var(--orange), var(--orange)) 0 .235em / 100% .88em no-repeat; padding: 0 .12em; -webkit-box-decoration-break: clone; box-decoration-break: clone; }
+h2 { font-size: var(--fs-2); }
+
+/* "Parecido com:" dentro do painel da base, sob o "Já vem com". */
+.presets { display: flex; flex-wrap: wrap; align-items: center; gap: var(--s2) var(--s3); margin-top: var(--s1); padding: var(--s3) 0 var(--s1); border-top: 1px solid var(--line); }
+.presets-label { font-weight: 700; }
+.presets-list { display: flex; flex-wrap: wrap; gap: var(--s2); min-width: 0; }
+.preset {
+  display: inline-flex;
+  align-items: center;
+  min-height: 48px;
+  padding: 0 22px;
+  border: 2px solid var(--ink);
+  border-radius: var(--r-pill);
+  background: var(--white);
+  color: var(--ink);
+  font: 600 var(--fs-4)/1.2 var(--text);
+  cursor: pointer;
+  touch-action: manipulation;
+  transition: background-color .15s, color .15s;
+}
+/* Marcado: o ponto laranja entra no lugar do respiro esquerdo (8 + 8 + 6 = 22), sem mudar a largura. */
+.preset[aria-pressed="true"] { background: var(--ink); color: var(--paper); padding-left: var(--s2); }
+.preset[aria-pressed="true"]::before {
+  content: "";
+  flex: none;
+  width: 8px;
+  height: 8px;
+  margin-right: 6px;
+  border-radius: 50%;
+  background: var(--orange);
+}
+@media (hover: hover) {
+  .preset:hover:not([aria-pressed="true"]) { background: var(--paper-2); }
+}
+.preset:active:not([aria-pressed="true"]) { background: var(--paper-2); }
+.layout { display: grid; gap: var(--s5); grid-template-columns: minmax(0, 1fr); }
+.options { min-width: 0; }
+.step { margin-bottom: var(--s6); }
+.step-head { display: flex; align-items: center; gap: var(--s3); margin-bottom: var(--s4); }
+.step-num {
+  flex: none;
+  width: 32px;
+  height: 32px;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  background: var(--orange);
+  color: var(--ink);
+  font: 700 var(--fs-4)/1 var(--text);
+}
+.panel { background: var(--white); border: 1px solid var(--line); border-radius: var(--r-card); }
+
+/* Seta de abrir e fechar, traço de 2 px. */
+.chev::after, .base summary::after {
+  content: "";
+  flex: none;
+  width: 8px;
+  height: 8px;
+  margin-right: 6px;
+  border-right: 2px solid currentColor;
+  border-bottom: 2px solid currentColor;
+  transform: translateY(-2px) rotate(45deg);
+  transition: transform .2s var(--ease);
+}
+.chev[aria-expanded="true"]::after, .base details[open] summary::after { transform: translateY(2px) rotate(-135deg); }
+
+/* Passo 1: a base, uma linha; o "Já vem com" abre sob demanda. */
+.base { padding: var(--s3) var(--s4); margin-bottom: var(--s6); }
+.base-head { display: grid; grid-template-columns: auto minmax(0, 1fr) auto; align-items: center; gap: var(--s3); min-height: 44px; }
+.base-head .price { font-weight: 700; }
+.base details { margin-top: var(--s2); border-top: 1px solid var(--line); }
+.base summary {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--s3);
+  min-height: 44px;
+  margin-top: var(--s1);
+  font-weight: 700;
+  cursor: pointer;
+  list-style: none;
+}
+.base summary::-webkit-details-marker { display: none; }
+.base ul {
+  margin: 0;
+  padding: var(--s1) 0 var(--s2);
+  list-style: none;
+  display: grid;
+  gap: var(--s1) var(--s5);
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 260px), 1fr));
+}
+.base li { position: relative; padding: 2px 0 2px var(--s5); font-size: var(--fs-4); line-height: 1.45; }
+.base li::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 4px;
+  width: 16px;
+  height: 16px;
+  background: var(--check-ink-thin) center / 16px no-repeat;
+}
+
+/* Passo 2: pacotes. */
+/* Respiro em cima e entre linhas para o selo, que passa da borda do cartão. */
+.packs { display: grid; gap: var(--s5) var(--s3); padding-top: var(--s2); grid-template-columns: repeat(auto-fill, minmax(min(100%, 280px), 1fr)); }
+.card { position: relative; }
+.card.pop-open { z-index: 10; }
+.card.toggle, .card.pack { cursor: pointer; }
+.card.pack {
+  background: var(--white);
+  border: 1px solid var(--line);
+  border-radius: var(--r-card);
+  padding: var(--s4);
+  transition: border-color .15s, box-shadow .15s;
+}
+.card.pack.on { border-color: var(--ink); box-shadow: inset 0 0 0 1px var(--ink); }
+/* Selo dos pacotes com desconto, no canto, sobre a borda. */
+.tag {
+  position: absolute;
+  top: -11px;
+  right: var(--s4);
+  padding: 3px var(--s2);
+  border-radius: var(--r-pill);
+  background: var(--yellow);
+  color: var(--ink);
+  font: 700 var(--fs-4)/1.1 var(--text);
+  pointer-events: none;
+}
+.who { margin: var(--s2) 0 0 36px; font-size: var(--fs-4); line-height: 1.45; color: var(--muted); }
+
+/* Passo 3: um painel só, grupos em acordeão separados por fio, itens em linhas de lista. */
+.groups { background: var(--white); border: 1px solid var(--line); border-radius: var(--r-card); }
+.group + .group { border-top: 1px solid var(--line); }
+.acc {
+  display: flex;
+  align-items: center;
+  gap: var(--s3);
+  width: 100%;
+  min-height: 56px;
+  padding: 0 var(--s4);
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  color: var(--ink);
+  font: 700 var(--fs-3)/1.3 var(--text);
+  text-align: left;
+  cursor: pointer;
+  touch-action: manipulation;
+}
+.acc .t { flex: 1 1 auto; min-width: 0; }
+.acc .count {
+  flex: none;
+  min-width: 24px;
+  height: 24px;
+  padding: 0 var(--s2);
+  border-radius: var(--r-pill);
+  background: var(--paper-2);
+  color: var(--ink);
+  font: 700 var(--fs-4)/24px var(--text);
+  text-align: center;
+  font-variant-numeric: tabular-nums;
+}
+.acc .count[hidden] { display: none; }
+@media (hover: hover) {
+  .acc:hover { background: var(--hover); }
+}
+.acc:active, .list .card.toggle:active, .card.pack:active { background-color: rgba(17, 17, 17, 0.06); }
+.acc:focus-visible { outline-offset: -3px; }
+.list { border-top: 1px solid var(--line); }
+.list[hidden] { display: none; }
+.list .card { padding: var(--s3) var(--s4); border-top: 1px solid var(--line); }
+.list .card:first-child { border-top: 0; }
+/* Raio interno = raio do painel menos a borda, para o fundo de hover não vazar do canto. */
+.group:first-child .acc { border-radius: calc(var(--r-card) - 1px) calc(var(--r-card) - 1px) 0 0; }
+.group:last-child .acc[aria-expanded="false"] { border-radius: 0 0 calc(var(--r-card) - 1px) calc(var(--r-card) - 1px); }
+.group:last-child .list .card:last-child { border-radius: 0 0 calc(var(--r-card) - 1px) calc(var(--r-card) - 1px); }
+@media (hover: hover) {
+  .list .card.toggle:hover { background-color: var(--hover); }
+  .card.pack:not(.on):hover { border-color: var(--line-strong); }
+}
+.card input.native {
+  position: absolute;
+  opacity: 0;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  cursor: pointer;
+}
+.card input.native:disabled { pointer-events: none; }
+.card:has(input.native:focus-visible) { outline: 3px solid var(--ink); outline-offset: -3px; }
+
+.row { display: grid; grid-template-columns: 24px minmax(0, 1fr) auto; align-items: start; gap: var(--s3); }
+.mark {
+  position: relative;
+  width: 24px;
+  height: 24px;
+  border: 2px solid var(--ink);
+  border-radius: var(--r-sm);
+  background: var(--white);
+  transition: background-color .15s;
+}
+.mark::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: var(--check-yellow) center / 16px no-repeat;
+  transform: scale(0);
+  transition: transform .28s var(--spring);
+}
+.card.on .mark { background: var(--ink); }
+.card.on .mark::after { transform: scale(1); }
+.card.inc .mark { background: var(--paper-2); }
+.card.inc .mark::after { background-image: var(--check-ink); transform: scale(1); }
+.info { min-width: 0; }
+.name { display: block; font-weight: 500; line-height: 1.5; }
+.card.on .name { font-weight: 700; }
+
+.price {
+  max-width: 8rem;
+  font-weight: 600;
+  line-height: 1.5;
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+.price .v { white-space: nowrap; }
+.price .pre { display: block; font-size: var(--fs-4); font-weight: 400; line-height: 1.3; color: var(--muted); }
+.price small { margin-left: 0.25em; font-size: var(--fs-4); font-weight: 400; color: var(--muted); white-space: nowrap; }
+.price.plain { font-size: var(--fs-4); }
+.card.inc .price { font-weight: 400; color: var(--muted); }
+
+/* Quantidade: em 0, só o "+" na linha; com quantidade, o controle inteiro embaixo. */
+.ctrl { display: flex; align-items: center; flex-wrap: wrap; gap: var(--s2) var(--s3); position: relative; z-index: 1; }
+.sub { font-size: var(--fs-4); color: var(--muted); }
+.sub:empty { display: none; }
+.card.qty { display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: center; column-gap: var(--s3); }
+.card.qty.on .ctrl { grid-column: 1 / -1; margin: var(--s2) 0 0 36px; }
+.card.qty:not(.on) .stepper button:first-child,
+.card.qty:not(.on) .stepper output { display: none; }
+.card.choice .ctrl { margin: var(--s2) 0 0 36px; }
+
+.stepper { display: inline-flex; align-items: center; flex: none; border: 2px solid var(--ink); border-radius: var(--r-pill); background: var(--white); }
+.stepper button {
+  width: 44px;
+  height: 44px;
+  border: 0;
+  border-radius: 50%;
+  background: transparent;
+  color: var(--ink);
+  font: 700 var(--fs-2)/1 var(--text);
+  cursor: pointer;
+  touch-action: manipulation;
+  transition: background-color .15s, color .15s;
+}
+.stepper button:focus-visible { outline-offset: 0; }
+@media (hover: hover) {
+  .stepper button:hover:not(:disabled) { background: var(--ink); color: var(--white); }
+}
+.stepper button:active:not(:disabled) { background: var(--ink); color: var(--white); }
+.stepper button:disabled { color: rgba(17, 17, 17, 0.3); cursor: not-allowed; }
+.stepper output { min-width: 28px; text-align: center; font-weight: 700; font-variant-numeric: tabular-nums; }
+
+.seg { border: 0; margin: 0; padding: 0; min-width: 0; flex: 1 1 100%; display: grid; gap: var(--s2); grid-template-columns: repeat(auto-fit, minmax(min(100%, 220px), 1fr)); }
+.seg legend { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); }
+.opt {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: var(--s2);
+  min-height: 44px;
+  padding: var(--s2) var(--s3);
+  border: 1px solid var(--line-control);
+  border-radius: var(--r-sm);
+  background: var(--white);
+  font-size: var(--fs-4);
+  font-weight: 500;
+  line-height: 1.3;
+  cursor: pointer;
+  transition: border-color .15s, box-shadow .15s;
+}
+.opt::before {
+  content: "";
+  flex: none;
+  width: 18px;
+  height: 18px;
+  border: 2px solid var(--ink);
+  border-radius: 50%;
+  background: var(--white);
+  transition: box-shadow .2s var(--ease), background-color .2s;
+}
+.opt input { position: absolute; inset: 0; width: 100%; height: 100%; margin: 0; opacity: 0; cursor: pointer; }
+@media (hover: hover) {
+  .opt:hover { border-color: var(--ink); }
+}
+.opt:has(input:checked) { border-color: var(--ink); box-shadow: inset 0 0 0 1px var(--ink); }
+.opt:has(input:checked)::before { background: var(--ink); box-shadow: inset 0 0 0 3px var(--white); }
+.opt:has(input:focus-visible) { outline: 3px solid var(--ink); outline-offset: 3px; }
+
+/* Botão (i): ícone "info" do Lucide, em cinza, 18 px; alvo de 44 px. */
+.ibtn {
+  position: relative;
+  z-index: 2;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  vertical-align: middle;
+  width: 44px;
+  height: 44px;
+  margin: -12px -10px -12px -4px;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: var(--muted);
+  cursor: pointer;
+  touch-action: manipulation;
+  border-radius: 50%;
+}
+.ibtn svg { width: 18px; height: 18px; display: block; border-radius: 50%; transition: background-color .15s, color .15s; }
+.ibtn:focus-visible { outline-offset: -2px; }
+@media (hover: hover) {
+  .ibtn:hover svg { background: rgba(17, 17, 17, 0.08); color: var(--ink); }
+}
+.ibtn[aria-expanded="true"] svg { background: var(--ink); color: var(--white); }
+.pop {
+  position: absolute;
+  z-index: 30;
+  left: var(--s2);
+  right: var(--s2);
+  top: calc(100% + var(--s1));
+  background: var(--white);
+  color: var(--ink);
+  border: 1px solid var(--line-strong);
+  border-radius: var(--r);
+  box-shadow: 0 8px 24px rgba(17, 17, 17, 0.14);
+  padding: var(--s4);
+  animation: pop-in .2s var(--ease);
+  font: 400 var(--fs-4)/1.5 var(--text);
+  text-align: left;
+  cursor: default;
+  scroll-margin-bottom: calc(var(--bar-h) + var(--s4));
+}
+.pop[hidden] { display: none; }
+.pop.up { top: auto; bottom: calc(100% + var(--s1)); }
+.pop p { margin: 0 0 var(--s2); overflow-wrap: anywhere; }
+.pop p:last-child { margin-bottom: 0; }
+.pop strong { font-weight: 700; }
+.total-row .pop { left: 0; right: 0; }
+@keyframes pop-in { from { opacity: 0; transform: translateY(-4px); } }
+
+/* Resumo. */
+.summary { padding: var(--s4); }
+.summary h2 { margin-bottom: var(--s3); }
+.lines { list-style: none; margin: 0; padding: 0 0 var(--s2); }
+.lines li {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: baseline;
+  gap: var(--s4);
+  padding: var(--s1) 0;
+  font-size: var(--fs-4);
+  line-height: 1.4;
+}
+.lines li:first-child span:first-child { font-weight: 700; }
+.lines li span:last-child { white-space: nowrap; font-weight: 600; text-align: right; font-variant-numeric: tabular-nums; }
+.lines li.new { animation: line-in .35s var(--ease); }
+@keyframes line-in { from { opacity: 0; transform: translateX(-8px); } }
+.total-row { position: relative; display: flex; justify-content: space-between; align-items: center; gap: var(--s3); margin-top: var(--s1); padding-top: var(--s3); border-top: 1px solid var(--line-strong); }
+.total-label { display: inline-flex; align-items: center; gap: var(--s2); font-weight: 700; }
+.total-val, .bar .bar-total {
+  display: inline-block;
+  font-family: var(--display);
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+  background: linear-gradient(var(--yellow), var(--yellow)) 0 100% / 0% 0.22em no-repeat;
+  padding-bottom: 0.12em;
+}
+.total-val { font-size: var(--fs-1); transform-origin: right bottom; }
+.bump { animation: bump .45s var(--ease), sweep .9s var(--ease); }
+@keyframes bump { 30% { transform: scale(1.06); } }
+@keyframes sweep {
+  0% { background-size: 0% 0.22em; background-position: 0 100%; }
+  45% { background-size: 100% 0.22em; background-position: 0 100%; }
+  55% { background-size: 100% 0.22em; background-position: 100% 100%; }
+  100% { background-size: 0% 0.22em; background-position: 100% 100%; }
+}
+.split { display: grid; gap: var(--s1); margin: var(--s3) 0 0; padding: 0; font-size: var(--fs-4); }
+.split div { display: flex; justify-content: space-between; gap: var(--s3); }
+.split dt { margin: 0; color: var(--muted); }
+.split dd { margin: 0; font-weight: 600; font-variant-numeric: tabular-nums; }
+.from-note, .fixed-note { font-size: var(--fs-4); line-height: 1.45; color: var(--muted); }
+.from-note { margin: var(--s3) 0 0; }
+.fixed-note { margin: var(--s3) 0 0; padding-top: var(--s3); border-top: 1px solid var(--line); }
+
+/* Ação principal: pílula laranja, largura total, texto em tinta (6,0:1). */
+.cta {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  min-height: 48px;
+  padding: var(--s2) var(--s5);
+  border-radius: var(--r-pill);
+  background: var(--orange);
+  color: var(--ink);
+  font: 700 var(--fs-3)/1.2 var(--text);
+  text-align: center;
+  text-decoration: none;
+  touch-action: manipulation;
+  transition: background-color .15s, transform .15s var(--ease);
+}
+.summary .cta { margin-top: var(--s5); }
+@media (hover: hover) {
+  .cta:hover { background: var(--orange-hover); }
+}
+.cta:active { transform: scale(0.98); }
+
+/* Barra do celular. */
+.bar {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 20;
+  background: var(--ink);
+  color: var(--white);
+  border-radius: var(--r) var(--r) 0 0;
+  padding-bottom: env(safe-area-inset-bottom);
+}
+.bar-in { max-width: 1200px; margin: 0 auto; padding: var(--s2) var(--s4) var(--s3); display: grid; gap: var(--s2); min-height: var(--bar-h); }
+/* O bloco do total é o botão que abre e fecha o resumo. */
+.bar-sum {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--s3);
+  width: 100%;
+  min-height: 44px;
+  padding: 0;
+  border: 0;
+  border-radius: var(--r-sm);
+  background: transparent;
+  color: var(--white);
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+  touch-action: manipulation;
+}
+.bar .label { font-size: var(--fs-4); color: #D6D6D6; line-height: 1.2; }
+.bar-amount { display: inline-flex; align-items: center; gap: var(--s3); }
+.bar-amount::after {
+  content: "";
+  flex: none;
+  width: 8px;
+  height: 8px;
+  border-right: 2px solid currentColor;
+  border-bottom: 2px solid currentColor;
+  transform: translateY(2px) rotate(-135deg);
+  transition: transform .25s var(--ease);
+}
+.bar-sum[aria-expanded="true"] .bar-amount::after { transform: translateY(-2px) rotate(45deg); }
+.bar .bar-total { font-size: var(--fs-2); transform-origin: right bottom; }
+.bar-sum:focus-visible, .bar .cta:focus-visible { outline: 3px solid var(--white); outline-offset: 3px; }
+
+@media (max-width: 899px) {
+  .summary {
+    display: none;
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: calc(var(--bar-h) - var(--s3) + env(safe-area-inset-bottom));
+    z-index: 15;
+    max-height: calc(100vh - var(--bar-h) - var(--s5));
+    max-height: calc(100dvh - var(--bar-h) - var(--s5));
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    border-radius: var(--r) var(--r) 0 0;
+    border-width: 1px 0 0;
+    padding-bottom: var(--s6);
+    box-shadow: 0 -8px 24px rgba(17, 17, 17, 0.16);
+  }
+  .summary.open { display: block; animation: sheet-in .3s var(--ease); }
+  /* No celular a ação fica na barra; no resumo aberto ela se repetiria logo acima. */
+  .summary .cta { display: none; }
+}
+/* Item no celular estreito: preço (ou "Incluído no pacote") na segunda linha, sob o nome;
+   o "+" fica sozinho à direita. */
+@media (max-width: 479px) {
+  .list .row { grid-template-columns: 24px minmax(0, 1fr); grid-template-areas: "mark info" ". price"; row-gap: 2px; }
+  .list .row .mark { grid-area: mark; }
+  .list .row .info { grid-area: info; }
+  .list .row .price { grid-area: price; max-width: none; text-align: left; }
+  .list .price .pre { display: inline; }
+}
+@keyframes sheet-in { from { opacity: 0; transform: translateY(24px); } }
+@media (min-width: 900px) {
+  body { padding-bottom: 0; }
+  .wrap { padding: var(--s6) var(--s5); }
+  .layout { grid-template-columns: minmax(0, 1fr) 360px; gap: var(--s6); align-items: start; }
+  .summary {
+    position: sticky;
+    top: var(--s5);
+    max-height: calc(100vh - 2 * var(--s5));
+    overflow-y: auto;
+    padding: var(--s5);
+  }
+  .bar { display: none; }
+}
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { transition: none !important; animation: none !important; scroll-behavior: auto !important; }
+}
+/* Cabeçalho igual ao do briefing: Voltar e a marca. */
+.top { max-width: 1200px; margin: 0 auto; padding: 18px var(--s4); display: flex; align-items: center; justify-content: space-between; gap: 12px; box-sizing: border-box; }
+.top-back { display: inline-flex; align-items: center; gap: 10px; min-height: 44px; padding: 0 18px; box-sizing: border-box; border-radius: 999px; border: 2px solid var(--ink); background: var(--paper); color: var(--ink); font: 600 1rem/1.2 var(--text); text-decoration: none; transition: background-color .22s, color .22s; }
+.top-back svg { width: 20px; height: 20px; flex: none; fill: none; stroke: currentColor; stroke-width: 2.4; stroke-linecap: round; stroke-linejoin: round; }
+@media (hover: hover) { .top-back:hover { background: var(--ink); color: var(--paper); } }
+.top-back:focus-visible { outline: 3px solid var(--orange); outline-offset: 2px; }
+.top-brand { font-family: 'Archivo Black', sans-serif; letter-spacing: 0.02em; color: var(--ink); text-decoration: none; }
+@media (max-width: 767px) { .top { padding-block: 12px; } }
+.wrap { padding-top: var(--s3); }
+</style>
+</head>
+<body>
+<!-- Ícones info e check: Lucide (ISC) -->
+<header class="top">
+<a class="top-back" href="index.html"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M19 12H5M11 6l-6 6 6 6"/></svg>Voltar</a>
+<a class="top-brand" href="index.html">CRAFTO<span style="color: var(--orange)">M</span>AKERS</a>
+</header>
+<main class="wrap">
+  <h1>Monte sua <span class="highlight">landing page</span></h1>
+  <div class="layout">
+    <div class="options">
+      <section class="base panel" id="passo-1" aria-labelledby="base-title">
+        <div class="base-head">
+          <span class="step-num" aria-hidden="true">1</span>
+          <h2 id="base-title">Landing page</h2>
+          <span class="price">R$ 1.000</span>
+        </div>
+        <details>
+          <summary>Já vem com</summary>
+          <ul id="base-list"></ul>
+        </details>
+        <div class="presets" role="group" aria-labelledby="presets-label">
+          <span class="presets-label" id="presets-label">Parecido com:</span>
+          <div class="presets-list" id="presets"></div>
+        </div>
+      </section>
+
+      <section class="step" id="passo-2" aria-labelledby="packs-title">
+        <div class="step-head">
+          <span class="step-num" aria-hidden="true">2</span>
+          <h2 id="packs-title">Pacotes</h2>
+        </div>
+        <div class="packs" id="packs"></div>
+      </section>
+
+      <section class="step" id="passo-3" aria-labelledby="items-title">
+        <div class="step-head">
+          <span class="step-num" aria-hidden="true">3</span>
+          <h2 id="items-title">Monte item por item</h2>
+        </div>
+        <div class="groups" id="groups"></div>
+      </section>
+    </div>
+
+    <aside class="summary panel" id="summary" aria-labelledby="summary-title">
+      <h2 id="summary-title">Seu pedido</h2>
+      <ul class="lines" id="lines"></ul>
+      <div class="total-row" id="total-row">
+        <span class="total-label" id="total-label">Total</span>
+        <span class="total-val" id="total" aria-live="polite" aria-atomic="true"></span>
+      </div>
+      <dl class="split">
+        <div><dt>Entrada (20%)</dt><dd id="entry"></dd></div>
+        <div><dt>Entrega (80%)</dt><dd id="delivery"></dd></div>
+      </dl>
+      <p class="from-note" id="from-note" hidden>Valores a partir de: o preço final dos itens marcados “a partir de” é fechado na conversa.</p>
+      <p class="fixed-note">Fora do valor: domínio, tráfego pago, rastreamento (Pixel, GTM), manutenção mensal e servidor pago (só entra se você escolher).</p>
+      <a class="cta" href="briefing.html">Conte sobre o seu negócio</a>
+    </aside>
+  </div>
+</main>
+
+<div class="bar">
+  <div class="bar-in">
+    <button type="button" class="bar-sum" id="toggle-summary" aria-expanded="false" aria-controls="summary">
+      <span class="label">Total</span>
+      <span class="bar-amount"><span class="bar-total" id="bar-total" aria-live="polite" aria-atomic="true"></span></span>
+    </button>
+    <a class="cta" href="briefing.html">Conte sobre o seu negócio</a>
+  </div>
+</div>
+
+<script>
+(function () {
+  var BASE = { name: "Landing page", price: 1000 };
+  var URGENCY = { id: "urgencia", name: "Urgência", rate: 0.3 };
+  var MAX_QTY = 10;
+  var SPLIT_ENTRY = 0.2;
+
+  var BASE_LIST = [
+    "Página única que funciona no celular e no computador, com design sob medida",
+    "Até 5 seções",
+    "Texto trazido por você, com ajuste nosso",
+    "Sua identidade (logo, cores) e suas fotos, usadas como vieram",
+    "Botões de WhatsApp com mensagem pronta",
+    "1 rodada de revisão no layout e 1 no texto",
+    "SEO básico: título, descrição e prévia do link no WhatsApp e nas redes",
+    "Publicação no GitHub Pages, sem mensalidade de hospedagem",
+    "Ajustes de conteúdo por 30 dias depois da entrega",
+    "Blocos que aparecem ao rolar a página e rolagem suave (feito em todos os sites)",
+    "Perguntas frequentes em acordeão, quando ocupam uma das 5 seções",
+    "Sem rastreamento (nenhum Analytics, Pixel ou GTM)"
+  ];
+
+  var GROUPS = [
+    { title: "WhatsApp e conversão", items: [
+      { id: "form-wa", name: "Formulário para o WhatsApp", price: 350, type: "toggle",
+        info: "Formulário curto (até 6 campos) que monta a mensagem e abre o WhatsApp já com o pedido do visitante. Nada é guardado nem enviado para outro lugar",
+        done: "Orvanno (bairros por cidade), Teia Ativa (escolhe o especialista)" },
+      { id: "contatos", name: "Vários contatos de WhatsApp", price: 150, type: "toggle",
+        info: "O visitante escolhe com quem falar; cada pessoa da equipe tem o seu número e a sua mensagem",
+        done: "Teia Ativa" },
+      { id: "barra-wa", name: "Barra fixa de WhatsApp", price: 100, type: "toggle",
+        info: "Barra com o botão do WhatsApp que fica sempre visível no celular",
+        done: "Orvanno" }
+    ]},
+    { title: "Imagens", items: [
+      { id: "fotos", name: "Tratamento de fotos", price: 250, type: "qty", unit: "por lote",
+        info: "Lote de até 10 fotos suas com luz, cor e recorte corrigidos, convertidas para WebP leve",
+        done: "Orvanno, Teia Ativa" },
+      { id: "img-ia", name: "Imagem de IA", price: 100, type: "qty",
+        info: "1 imagem ou ilustração gerada por IA no estilo do site, com o prompt guardado",
+        done: "Fiezta (todas), Orvanno (hero), Craftomakers (robôs)" },
+      { id: "lote-ia", name: "Lote de imagens de IA", price: 700, type: "qty", unit: "por lote",
+        info: "10 imagens de IA da mesma série (mesmo estilo, como num catálogo de produtos)",
+        done: "Fiezta (todas), Orvanno (90 acabamentos), Forja (todas)" },
+      { id: "galeria", name: "Galeria básica", price: 300, type: "toggle",
+        info: "Grade de até 12 fotos que ampliam ao toque, com passagem de uma para outra",
+        done: "Orvanno (cerca de 9 fotos)" },
+      { id: "prints", name: "Faixa de prints", price: 250, type: "toggle",
+        info: "Faixa de capturas de tela com rolagem lateral, até 20 imagens",
+        done: "Fiezta (19 prints)" },
+      { id: "faixa-logos", name: "Faixa de logos", price: 200, type: "toggle",
+        info: "Faixa de logos de clientes ou parceiros passando sozinha, até 15 logos",
+        done: "Teia Ativa, Orvanno" }
+    ]},
+    { title: "Texto e pesquisa", items: [
+      { id: "texto", name: "Texto escrito do zero", price: 600, type: "toggle",
+        info: "Texto de todas as seções, escrito a partir do briefing, com título, chamadas e botões. Até 6 seções; proposta: R$ 100 por seção acima disso" },
+      { id: "pesq-basica", name: "Pesquisa básica", price: 300, type: "toggle",
+        info: "Ficha de 3 concorrentes (promessa, oferta, prova, ação) usada no texto" },
+      { id: "pesq-aprof", name: "Pesquisa aprofundada", price: 700, type: "toggle",
+        info: "Relatório de 2 a 4 páginas, em PDF: 8 a 10 concorrentes, tabela comparativa, a lacuna que você pode afirmar, as objeções e os termos de busca do público" }
+    ]},
+    { title: "Identidade visual", items: [
+      { id: "vetor", name: "Vetorização do logo", type: "choice",
+        options: [
+          { label: "Logo de traço simples, até 3 cores", price: 200 },
+          { label: "Com degradê, ilustração ou muitos detalhes", price: 350 }
+        ],
+        info: "Seu logo redesenhado em vetor, sem perder nada do desenho: SVG e PNG com fundo transparente, nas versões colorida, clara (para fundo escuro) e de uma cor, e o ícone do site (favicon)" },
+      { id: "logo", name: "Logotipo criado", price: 800, type: "toggle",
+        info: "Logo novo: 2 propostas, 1 rodada de ajuste, entregue em SVG e PNG nas versões colorida, clara e de uma cor, mais o favicon",
+        done: "CRM Forja (logo por IA, criado do zero), Craftomakers" },
+      { id: "paleta", name: "Paleta e tipografia", price: 900, type: "toggle",
+        info: "Paleta de 5 a 7 cores com os códigos, 2 fontes de uso comercial liberado instaladas no site, e uma página com as regras de uso",
+        done: "CRM Forja (do zero), Craftomakers, Fiezta, Teia Ativa" },
+      { id: "tema", name: "Modo claro e escuro", price: 400, type: "toggle",
+        info: "Botão que troca o site entre tema claro e escuro, guardando a escolha do visitante",
+        done: "Teia Ativa, Fiezta (tema secreto com som)" }
+    ]},
+    { title: "Estrutura", items: [
+      { id: "secao", name: "Seção extra", price: 250, type: "qty",
+        info: "Uma seção a mais na página, com o layout e o texto que você trouxe",
+        done: "todos os sites (7 a 11 seções)" },
+      { id: "pagina", name: "Página extra", price: 200, type: "qty",
+        info: "Uma página simples a mais: privacidade, 404, sobre, serviços, contato ou doação. Página com várias seções soma as seções",
+        done: "Orvanno, Forja, Teia Ativa, Fiezta" },
+      { id: "idioma", name: "Idioma extra", price: 700, type: "qty", from: true,
+        info: "A página inteira em outro idioma, com o texto adaptado (não traduzido palavra por palavra) e a troca de idioma no menu",
+        done: "Fiezta (inglês e português)" }
+    ]},
+    { title: "Revisão e prazo", items: [
+      { id: "revisao", name: "Rodada extra de revisão", price: 200, type: "qty",
+        info: "Mais uma rodada de ajustes no layout ou no texto, antes da entrega" },
+      { id: "urgencia", name: URGENCY.name, rate: URGENCY.rate, type: "toggle",
+        info: "Entrega na metade do prazo" }
+    ]},
+    { title: "Google e publicação", items: [
+      { id: "seo", name: "SEO completo", price: 300, type: "toggle",
+        info: "Dados estruturados do negócio para o Google, mapa do site (sitemap), robots.txt e, com mais de um idioma, a indicação de cada idioma para o Google",
+        done: "Orvanno, Teia Ativa, Fiezta" },
+      { id: "dominio", name: "Ligação do domínio", price: 100, type: "toggle",
+        info: "Seu domínio (que você registra e paga) apontado para o site, com HTTPS",
+        done: "Teia Ativa, Orvanno" },
+      { id: "servidor", name: "Servidor pago", price: 250, type: "toggle",
+        info: "Publicação no servidor que você contratar e paga, em vez do GitHub Pages" }
+    ]},
+    { title: "Interação e animação", items: [
+      { id: "carrossel", name: "Carrossel", price: 300, type: "qty",
+        info: "Carrossel de depoimentos, casos ou destaques, que funciona com o dedo e com setas",
+        done: "Teia Ativa, Orvanno, Craftomakers" },
+      { id: "menu", name: "Menu em tela cheia", price: 200, type: "toggle",
+        info: "Menu que abre cobrindo a tela, com os links das seções",
+        done: "Orvanno, Teia Ativa (no celular)" },
+      { id: "abas", name: "Seletor por abas", price: 500, type: "qty",
+        info: "Botões que trocam o conteúdo de um bloco (ofertas, planos, modelos) sem sair da página",
+        done: "Fiezta (layouts), Teia Ativa (3 ofertas por aba)" },
+      { id: "tabela", name: "Tabela comparativa", price: 500, type: "qty",
+        info: "Tabela que compara opções lado a lado, com detalhes que abrem numa janela",
+        done: "Fiezta" },
+      { id: "hero", name: "Hero animado", price: 500, type: "toggle",
+        info: "Abertura da página com ilustração animada (SVG e CSS), leve e sem vídeo",
+        done: "Fiezta" },
+      { id: "mostruario", name: "Mostruário com abas", price: 800, type: "toggle", from: true,
+        info: "Janela com o mostruário dos produtos separado em abas, até 30 itens em até 4 abas; acima disso, orçamento. As imagens são suas ou entram como imagem de IA",
+        done: "Orvanno (cerca de 90 acabamentos)" },
+      { id: "slides", name: "Navegação por slides", price: 800, type: "toggle", from: true,
+        info: "Página que avança como apresentação, de tela em tela, com efeito 3D nos cartões e faixas animadas",
+        done: "Craftomakers" }
+    ]},
+    { title: "Documentos no navegador", items: [
+      { id: "form-longo", name: "Formulário longo com PDF", price: 1200, type: "toggle", from: true,
+        info: "Questionário longo (dezenas de perguntas) que guarda as respostas no aparelho do visitante e gera um PDF no próprio navegador",
+        done: "Craftomakers (briefing, cerca de 90 perguntas)" },
+      { id: "pdf", name: "PDF a partir de texto", price: 400, type: "toggle",
+        info: "Um manual ou guia em PDF diagramado com a sua identidade",
+        done: "Orvanno (manual de uso das campanhas)" }
+    ]}
+  ];
+
+  var PACKS = [
+    { id: "p-whatsapp", name: "Conversão no WhatsApp", price: 700,
+      who: "Quem quer receber no WhatsApp contatos que já chegam dizendo o que querem",
+      ref: "Orvanno",
+      items: [{ id: "form-wa", qty: 1 }, { id: "barra-wa", qty: 1 },
+              { id: "secao", qty: 1, label: "Seção extra de perguntas frequentes" }] },
+    { id: "p-identidade", name: "Identidade completa", price: 1600,
+      who: "Quem não tem marca nenhuma: nem logo, nem cor, nem referência",
+      save: "R$ 100 (cerca de 6%): a paleta sai da mesma conversa e do mesmo estudo do logo",
+      ref: "CRM Forja",
+      items: [{ id: "logo", qty: 1 }, { id: "paleta", qty: 1 }] },
+    { id: "p-visual", name: "Visual de impacto", price: 1500,
+      who: "Quem quer chamar a atenção logo na primeira tela",
+      save: "R$ 100 (cerca de 6%): a animação e as imagens saem da mesma direção visual",
+      ref: "Fiezta (hero animado, todas as imagens por IA), Orvanno",
+      items: [{ id: "hero", qty: 1 }, { id: "img-ia", qty: 6, label: "6 imagens de IA" },
+              { id: "carrossel", qty: 1, label: "1 carrossel" }, { id: "menu", qty: 1 }] },
+    { id: "p-mostruario", name: "Mostruário de produtos", price: 1350, from: true,
+      who: "Quem vende produto com muitas opções (acabamentos, modelos, cores)",
+      ref: "Orvanno",
+      items: [{ id: "mostruario", qty: 1 }, { id: "galeria", qty: 1 },
+              { id: "fotos", qty: 1, label: "Tratamento de 10 fotos" }] },
+    { id: "p-pesquisa", name: "Pesquisa de mercado", price: 1200,
+      who: "Quem quer saber o que os concorrentes dizem e ter um texto que se diferencia deles",
+      save: "R$ 100 (cerca de 8%): o texto é escrito em cima da pesquisa, sem uma segunda rodada de briefing",
+      items: [{ id: "pesq-aprof", qty: 1 }, { id: "texto", qty: 1 }] },
+    { id: "p-internacional", name: "Internacional", price: 1000, from: true,
+      who: "Quem atende clientes de outro país ou em outra língua",
+      ref: "Fiezta",
+      items: [{ id: "idioma", qty: 1 }, { id: "seo", qty: 1, label: "SEO completo, com a indicação de cada idioma para o Google" }] }
+  ];
+
+  var PRESETS = [
+    { id: "orvanno", name: "Orvanno",
+      packs: ["p-whatsapp", "p-mostruario"],
+      items: { "secao": 4, "carrossel": 1, "menu": 1, "faixa-logos": 1, "img-ia": 1, "pagina": 1, "seo": 1, "dominio": 1 } },
+    { id: "teia-ativa", name: "Teia Ativa",
+      packs: [],
+      items: { "secao": 4, "form-wa": 1, "contatos": 1, "carrossel": 1, "faixa-logos": 1, "menu": 1, "abas": 1, "tema": 1, "fotos": 1, "pagina": 1, "seo": 1, "dominio": 1 } },
+    { id: "crm-forja", name: "CRM Forja",
+      packs: ["p-identidade"],
+      items: { "secao": 2, "lote-ia": 1, "pagina": 2 } },
+    { id: "fiezta", name: "Fiezta",
+      packs: ["p-identidade", "p-visual", "p-internacional"],
+      items: { "secao": 6, "tabela": 1, "prints": 1, "lote-ia": 1, "tema": 1, "pagina": 1 } }
+  ];
+
+  var state = {};
+  var packState = {};
+  var items = [];
+  var byId = {};
+  GROUPS.forEach(function (g) {
+    g.items.forEach(function (it) { items.push(it); byId[it.id] = it; state[it.id] = 0; });
+  });
+  PACKS.forEach(function (p) { packState[p.id] = false; });
+
+  function brl(n) {
+    return "R$ " + Math.round(n).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+  }
+  function el(tag, cls, text) {
+    var e = document.createElement(tag);
+    if (cls) e.className = cls;
+    if (text !== undefined) e.textContent = text;
+    return e;
+  }
+  var ICON_INFO = '<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg>';
+
+  var refs = {};
+  var packRefs = {};
+  var groupRefs = [];
+  var openPop = null;
+
+  function closePop(returnFocus) {
+    if (!openPop) return;
+    var o = openPop;
+    openPop = null;
+    o.pop.hidden = true;
+    o.btn.setAttribute("aria-expanded", "false");
+    o.card.classList.remove("pop-open");
+    if (returnFocus) o.btn.focus();
+  }
+
+  function makeInfo(card, label, uid, fill, popCls) {
+    var btn = el("button", "ibtn");
+    btn.type = "button";
+    btn.setAttribute("aria-label", label);
+    btn.setAttribute("aria-expanded", "false");
+    btn.setAttribute("aria-controls", "pop-" + uid);
+    btn.innerHTML = ICON_INFO;
+    var pop = el("div", "pop" + (popCls ? " " + popCls : ""));
+    pop.id = "pop-" + uid;
+    pop.hidden = true;
+    fill(pop);
+    btn.addEventListener("click", function (e) {
+      e.stopPropagation();
+      var wasOpen = openPop && openPop.btn === btn;
+      closePop(false);
+      if (wasOpen) return;
+      pop.hidden = false;
+      btn.setAttribute("aria-expanded", "true");
+      card.classList.add("pop-open");
+      openPop = { btn: btn, pop: pop, card: card };
+      pop.classList.remove("up");
+      pop.scrollIntoView({ block: "nearest" });
+      // Se a barra fixa do celular cobrir o balão e não houver mais rolagem, abre para cima.
+      var bar = document.querySelector(".bar");
+      var barTop = bar && bar.offsetParent !== null ? bar.getBoundingClientRect().top : window.innerHeight;
+      if (pop.getBoundingClientRect().bottom > barTop - 8) {
+        pop.classList.add("up");
+        pop.scrollIntoView({ block: "nearest" });
+      }
+    });
+    card.appendChild(pop);
+    return btn;
+  }
+
+  function labeled(parent, label, text) {
+    var p = el("p");
+    p.appendChild(el("strong", null, label));
+    p.appendChild(document.createTextNode(" " + text));
+    parent.appendChild(p);
+  }
+
+  function buildBase() {
+    var ul = document.getElementById("base-list");
+    BASE_LIST.forEach(function (t) { ul.appendChild(el("li", null, t)); });
+  }
+
+  function buildPacks() {
+    var root = document.getElementById("packs");
+    PACKS.forEach(function (p) {
+      var card = el("div", "card pack");
+      var cb = el("input", "native");
+      cb.type = "checkbox";
+      cb.setAttribute("aria-label", p.name);
+      cb.addEventListener("change", function () {
+        packState[p.id] = cb.checked;
+        handleManualChange();
+      });
+      card.appendChild(cb);
+
+      var row = el("div", "row");
+      var mark = el("span", "mark");
+      mark.setAttribute("aria-hidden", "true");
+      var info = el("span", "info");
+      var name = el("span", "name", p.name + " ");
+      // Os incluídos ficam no (i): cada item com o que você recebe, o desconto e onde já foi feito.
+      var btn = makeInfo(card, "O que você recebe: " + p.name, p.id, function (pop) {
+        p.items.forEach(function (ref) {
+          var it = byId[ref.id];
+          labeled(pop, (ref.label || it.name) + ":", it.info);
+        });
+        if (p.save) labeled(pop, "Desconto:", p.save);
+        if (p.ref) labeled(pop, "Já feito em:", p.ref);
+      });
+      name.appendChild(btn);
+      info.appendChild(name);
+      var price = el("span", "price");
+      if (p.from) price.appendChild(el("span", "pre", "a partir de"));
+      price.appendChild(el("span", "v", brl(p.price)));
+      row.appendChild(mark);
+      row.appendChild(info);
+      row.appendChild(price);
+      card.appendChild(row);
+
+      card.appendChild(el("p", "who", p.who));
+      if (p.save) card.appendChild(el("span", "tag", "Desconto"));
+
+      packRefs[p.id] = { card: card, input: cb };
+      root.appendChild(card);
+    });
+  }
+
+  function buildItems() {
+    var root = document.getElementById("groups");
+    GROUPS.forEach(function (g, gi) {
+      var sec = el("section", "group");
+      var hid = "group-" + gi;
+      var lid = "list-" + gi;
+      var h = el("h3");
+      h.id = hid;
+      var acc = el("button", "acc chev");
+      acc.type = "button";
+      acc.setAttribute("aria-expanded", "false");
+      acc.setAttribute("aria-controls", lid);
+      acc.appendChild(el("span", "t", g.title));
+      var count = el("span", "count", "0");
+      count.hidden = true;
+      acc.appendChild(count);
+      h.appendChild(acc);
+      sec.setAttribute("aria-labelledby", hid);
+      sec.appendChild(h);
+      var wrap = el("div", "list");
+      wrap.id = lid;
+      wrap.hidden = true;
+      var groupRef = { acc: acc, list: wrap, count: count, ids: g.items.map(function (it) { return it.id; }) };
+      acc.addEventListener("click", function () {
+        setGroupOpen(groupRef, acc.getAttribute("aria-expanded") !== "true");
+      });
+      groupRefs.push(groupRef);
+
+      g.items.forEach(function (it) {
+        var card = el("div", "card " + it.type);
+        var r = { card: card };
+        var mark = el("span", "mark");
+        mark.setAttribute("aria-hidden", "true");
+        var info = el("span", "info");
+        var name = el("span", "name", it.name + " ");
+        var btn = makeInfo(card, "O que você recebe: " + it.name, it.id, function (pop) {
+          labeled(pop, "O que você recebe:", it.info);
+          if (it.done) labeled(pop, "Já feito em:", it.done);
+        });
+        name.appendChild(btn);
+        info.appendChild(name);
+        var price = el("span", "price");
+        r.price = price;
+
+        if (it.type === "toggle") {
+          var cb = el("input", "native");
+          cb.type = "checkbox";
+          cb.setAttribute("aria-label", it.name);
+          cb.addEventListener("change", function () {
+            state[it.id] = cb.checked ? 1 : 0;
+            handleManualChange();
+          });
+          card.appendChild(cb);
+          r.input = cb;
+        }
+
+        var row = el("div", "row");
+        row.appendChild(mark);
+        row.appendChild(info);
+        row.appendChild(price);
+        card.appendChild(row);
+
+        if (it.type === "qty") {
+          var ctrl = el("div", "ctrl");
+          var st = el("div", "stepper");
+          var minus = el("button", null, "−");
+          minus.type = "button";
+          minus.setAttribute("aria-label", "Diminuir: " + it.name);
+          var out = el("output", null, "0");
+          out.setAttribute("aria-label", "Quantidade: " + it.name);
+          var plus = el("button", null, "+");
+          plus.type = "button";
+          plus.setAttribute("aria-label", "Aumentar: " + it.name);
+          minus.addEventListener("click", function () {
+            if (state[it.id] > 0) { state[it.id]--; handleManualChange(); }
+          });
+          plus.addEventListener("click", function () {
+            if (state[it.id] < MAX_QTY) { state[it.id]++; handleManualChange(); }
+          });
+          st.appendChild(minus);
+          st.appendChild(out);
+          st.appendChild(plus);
+          var sub = el("span", "sub");
+          ctrl.appendChild(st);
+          ctrl.appendChild(sub);
+          card.appendChild(ctrl);
+          r.out = out; r.minus = minus; r.plus = plus; r.sub = sub;
+        }
+
+        if (it.type === "choice") {
+          var ctrl2 = el("div", "ctrl");
+          var fs = el("fieldset", "seg");
+          fs.appendChild(el("legend", null, it.name + ": tipo de logo"));
+          r.radios = [];
+          it.options.forEach(function (o, oi) {
+            var lab = el("label", "opt");
+            var rd = el("input");
+            rd.type = "radio";
+            rd.name = "opt-" + it.id;
+            rd.value = String(oi + 1);
+            rd.addEventListener("click", function () {
+              state[it.id] = state[it.id] === oi + 1 ? 0 : oi + 1;
+              handleManualChange();
+            });
+            lab.appendChild(rd);
+            lab.appendChild(document.createTextNode(o.label + " · " + brl(o.price)));
+            fs.appendChild(lab);
+            r.radios.push(rd);
+          });
+          ctrl2.appendChild(fs);
+          card.appendChild(ctrl2);
+        }
+
+        refs[it.id] = r;
+        wrap.appendChild(card);
+      });
+      sec.appendChild(wrap);
+      root.appendChild(sec);
+    });
+  }
+
+  var presetButtons = {};
+
+  function setGroupOpen(groupRef, open) {
+    groupRef.acc.setAttribute("aria-expanded", open ? "true" : "false");
+    groupRef.list.hidden = !open;
+  }
+
+  function markActivePreset(presetId) {
+    PRESETS.forEach(function (preset) {
+      presetButtons[preset.id].setAttribute("aria-pressed", preset.id === presetId ? "true" : "false");
+    });
+  }
+
+  function handleManualChange() {
+    markActivePreset(null);
+    update();
+  }
+
+  function clearSelections() {
+    items.forEach(function (it) { state[it.id] = 0; });
+    PACKS.forEach(function (p) { packState[p.id] = false; });
+  }
+
+  function hasSelectedItem(groupRef) {
+    return groupRef.ids.some(function (id) { return state[id] > 0; });
+  }
+
+  function applyPreset(preset) {
+    clearSelections();
+    preset.packs.forEach(function (packId) { packState[packId] = true; });
+    Object.keys(preset.items).forEach(function (id) { state[id] = preset.items[id]; });
+    update();
+    groupRefs.forEach(function (groupRef) { setGroupOpen(groupRef, hasSelectedItem(groupRef)); });
+    markActivePreset(preset.id);
+  }
+
+  function buildPresets() {
+    var root = document.getElementById("presets");
+    PRESETS.forEach(function (preset) {
+      var button = el("button", "preset", preset.name);
+      button.type = "button";
+      button.setAttribute("aria-pressed", "false");
+      button.addEventListener("click", function () {
+        // Clicar de novo no site já marcado tira a seleção e volta só à base.
+        if (button.getAttribute("aria-pressed") === "true") {
+          clearSelections();
+          update();
+          groupRefs.forEach(function (groupRef) { setGroupOpen(groupRef, false); });
+          markActivePreset(null);
+          return;
+        }
+        applyPreset(preset);
+      });
+      presetButtons[preset.id] = button;
+      root.appendChild(button);
+    });
+  }
+
+  function buildTotalInfo() {
+    // O balão fica ancorado na linha do total.
+    var box = document.getElementById("total-row");
+    var btn = makeInfo(box, "Depois do prazo de 30 dias", "total", function (pop) {
+      pop.appendChild(el("p", null, "Depois do prazo de 30 dias, ajuste de conteúdo: R$ 100 cada."));
+    });
+    document.getElementById("total-label").appendChild(btn);
+  }
+
+  function setPrice(node, text, plain, small) {
+    node.textContent = "";
+    node.classList.toggle("plain", !!plain);
+    var PRE = "a partir de ";
+    if (text.indexOf(PRE) === 0) {
+      node.appendChild(el("span", "pre", PRE));
+      text = text.slice(PRE.length);
+    }
+    if (plain) node.appendChild(document.createTextNode(text));
+    else node.appendChild(el("span", "v", text));
+    if (small) node.appendChild(el("small", null, small));
+  }
+
+  var prevLines = null;
+  var prevTotal = null;
+  function bump(node) {
+    node.classList.remove("bump");
+    void node.offsetWidth;
+    node.classList.add("bump");
+  }
+
+  function update() {
+    var subtotal = BASE.price;
+    var lines = [[BASE.name, BASE.price]];
+    var hasFrom = false;
+    var cov = {};
+
+    PACKS.forEach(function (p) {
+      var on = packState[p.id];
+      var r = packRefs[p.id];
+      r.card.classList.toggle("on", on);
+      r.input.checked = on;
+      if (on) {
+        subtotal += p.price;
+        lines.push(["Pacote " + p.name + (p.from ? " (a partir de)" : ""), p.price]);
+        if (p.from) hasFrom = true;
+        p.items.forEach(function (ref) { cov[ref.id] = (cov[ref.id] || 0) + ref.qty; });
+      }
+    });
+
+    items.forEach(function (it) {
+      var q = state[it.id];
+      var r = refs[it.id];
+      var c = cov[it.id] || 0;
+      var prefix = it.from ? "a partir de " : "";
+
+      if (it.type === "toggle") {
+        var covered = c > 0;
+        var on = covered || q > 0;
+        r.card.classList.toggle("on", on);
+        r.card.classList.toggle("inc", covered);
+        r.input.checked = on;
+        r.input.disabled = covered;
+        if (it.rate) {
+          setPrice(r.price, "+" + Math.round(it.rate * 100) + "%");
+        } else if (covered) {
+          setPrice(r.price, "Incluído no pacote", true);
+        } else {
+          setPrice(r.price, prefix + brl(it.price));
+          if (q > 0) {
+            subtotal += it.price;
+            lines.push([it.name, it.price]);
+            if (it.from) hasFrom = true;
+          }
+        }
+      } else if (it.type === "qty") {
+        var total = c + q;
+        r.card.classList.toggle("on", total > 0);
+        r.card.classList.toggle("inc", c > 0 && q === 0);
+        r.out.textContent = total;
+        r.minus.disabled = q === 0;
+        r.plus.disabled = q === MAX_QTY;
+        // "cada" é o padrão e fica oculto; só "por lote" aparece ao lado do preço.
+        var unit = it.unit || "";
+        if (q > 0) {
+          var value = it.price * q;
+          subtotal += value;
+          lines.push([it.name + " × " + q + (c > 0 ? " (além do pacote)" : ""), value]);
+          if (it.from) hasFrom = true;
+          setPrice(r.price, prefix + brl(value));
+          r.sub.textContent = (c > 0 ? c + " no pacote + " : "") + q + " × " + brl(it.price);
+        } else if (c > 0) {
+          setPrice(r.price, "Incluído no pacote", true);
+          r.sub.textContent = c + (c === 1 ? " incluído" : " incluídos") + " no pacote";
+        } else {
+          setPrice(r.price, prefix + brl(it.price), false, unit);
+          r.sub.textContent = "";
+        }
+      } else {
+        r.card.classList.toggle("on", q > 0);
+        r.radios.forEach(function (rd, i) { rd.checked = q === i + 1; });
+        if (q > 0) {
+          var o = it.options[q - 1];
+          subtotal += o.price;
+          lines.push([it.name + " (" + (q === 1 ? "simples" : "com detalhes") + ")", o.price]);
+          setPrice(r.price, brl(o.price));
+        } else {
+          setPrice(r.price, brl(it.options[0].price) + " ou " + brl(it.options[1].price), true);
+        }
+      }
+    });
+
+    groupRefs.forEach(function (gr) {
+      var n = gr.ids.filter(function (id) { return refs[id].card.classList.contains("on"); }).length;
+      gr.count.textContent = n;
+      gr.count.hidden = n === 0;
+    });
+
+    var total = subtotal;
+    if (state[URGENCY.id] > 0) {
+      var extra = Math.round(subtotal * URGENCY.rate);
+      total = subtotal + extra;
+      lines.push([URGENCY.name + " +" + Math.round(URGENCY.rate * 100) + "%", extra]);
+    }
+    var entry = Math.round(total * SPLIT_ENTRY);
+    var delivery = total - entry;
+
+    var ul = document.getElementById("lines");
+    ul.textContent = "";
+    var seen = {};
+    lines.forEach(function (l) {
+      var li = el("li");
+      if (prevLines && !prevLines[l[0]]) li.className = "new";
+      seen[l[0]] = true;
+      li.appendChild(el("span", null, l[0]));
+      li.appendChild(el("span", null, brl(l[1])));
+      ul.appendChild(li);
+    });
+    prevLines = seen;
+    var totalEl = document.getElementById("total");
+    var barTotalEl = document.getElementById("bar-total");
+    totalEl.textContent = brl(total);
+    barTotalEl.textContent = brl(total);
+    if (prevTotal !== null && prevTotal !== total) { bump(totalEl); bump(barTotalEl); }
+    prevTotal = total;
+    document.getElementById("entry").textContent = brl(entry);
+    document.getElementById("delivery").textContent = brl(delivery);
+    document.getElementById("from-note").hidden = !hasFrom;
+  }
+
+  buildBase();
+  buildPresets();
+  buildPacks();
+  buildItems();
+  buildTotalInfo();
+  update();
+
+  var btn = document.getElementById("toggle-summary");
+  var summary = document.getElementById("summary");
+  btn.addEventListener("click", function () {
+    var open = summary.classList.toggle("open");
+    btn.setAttribute("aria-expanded", open ? "true" : "false");
+  });
+  document.addEventListener("click", function (e) {
+    if (openPop && !openPop.btn.contains(e.target) && !openPop.pop.contains(e.target)) closePop(false);
+  });
+  document.addEventListener("keydown", function (e) {
+    if (e.key !== "Escape") return;
+    if (openPop) { closePop(true); return; }
+    if (summary.classList.contains("open")) {
+      summary.classList.remove("open");
+      btn.setAttribute("aria-expanded", "false");
+      btn.focus();
+    }
+  });
+})();
+</script>
+</body>
+</html>
