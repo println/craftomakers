@@ -5,6 +5,8 @@
 .marquee-track.reverse{animation-direction:reverse}
 .marquee:hover .marquee-track{animation-play-state:paused}
 @keyframes marquee{to{transform:translateX(-50%)}}
+/* O texto das faixas vem do CSS: fora do HTML, o "Ouvir esta página" do Chrome não o lê. */
+.marquee-track span::before{content:attr(data-text) "\00a0"}
 /* Marca-texto: o laranja cobre só a altura das maiúsculas, sem subir na linha de cima. */
 .highlight{background:linear-gradient(#FF5A1F,#FF5A1F) 0 .235em/100% .88em no-repeat;padding:0 .12em;-webkit-box-decoration-break:clone;box-decoration-break:clone}
 /* Seções de destaque: blocos de cor com borda redonda, soltos sobre o papel. */
