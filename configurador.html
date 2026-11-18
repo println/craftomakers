@@ -841,9 +841,12 @@ h2 { font-size: var(--fs-2); }
       { id: "tabela", name: "Seção tabela comparativa", hours: 3.25, type: "qty",
         info: "Seção com uma tabela que compara opções lado a lado, com detalhes que abrem numa janela",
         done: "Fiezta" },
-      { id: "abas", name: "Seção com filtro", hours: 2.25, type: "qty",
-        info: "Seção com botões que filtram ou trocam o conteúdo (ofertas, planos, modelos) sem sair da página",
-        done: "Fiezta (layouts), Teia Ativa (3 ofertas por aba)" },
+      { id: "filtro", name: "Seção filtro de cliente", hours: 1.75, type: "toggle",
+        info: "Seção que diz para quem é e para quem não é o seu serviço, para o contato já chegar no perfil certo",
+        done: "Orvanno, Fiezta" },
+      { id: "abas", name: "Seção com abas", hours: 2.25, type: "qty",
+        info: "Seção com botões que trocam o conteúdo (ofertas, planos, modelos) sem sair da página",
+        done: "Teia Ativa (3 ofertas por aba)" },
       { id: "faixa-logos", name: "Seção parceiros com carrossel", hours: 1.75, type: "toggle",
         info: "Seção com os logos de clientes ou parceiros passando sozinhos, até 15 logos",
         done: "Orvanno, Teia Ativa" }
@@ -928,7 +931,7 @@ h2 { font-size: var(--fs-2); }
   var PRESETS = [
     { id: "orvanno", name: "Orvanno",
       packs: ["p-whatsapp", "p-mostruario"],
-      items: { "secao": 4, "galeria": 1, "ampliacao": 80, "hero": 1, "menu": 1, "faixa-logos": 1, "pagina": 1, "seo": 1, "dominio": 1 } },
+      items: { "secao": 3, "filtro": 1, "galeria": 1, "ampliacao": 80, "hero": 1, "menu": 1, "faixa-logos": 1, "pagina": 1, "seo": 1, "dominio": 1 } },
     { id: "teia-ativa", name: "Teia Ativa",
       packs: [],
       items: { "secao": 4, "form-wa": 1, "contatos": 1, "faixa-logos": 1, "menu": 1, "abas": 1, "tema": 1, "pagina": 1, "seo": 1, "dominio": 1 } },
@@ -937,7 +940,7 @@ h2 { font-size: var(--fs-2); }
       items: { "secao": 2, "img-ia": 10, "pagina": 2 } },
     { id: "fiezta", name: "Fiezta",
       packs: ["p-marca-pronta", "p-visual"],
-      items: { "hero": 2, "idioma": 1, "seo": 1, "secao": 6, "tabela": 1, "galeria-simples": 1, "img-ia": 10, "tema": 1, "pagina": 1 } }
+      items: { "hero": 2, "idioma": 1, "seo": 1, "secao": 5, "filtro": 1, "tabela": 1, "galeria-simples": 1, "img-ia": 10, "tema": 1, "pagina": 1 } }
   ];
 
 
