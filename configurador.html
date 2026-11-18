@@ -177,6 +177,13 @@ h2 { font-size: var(--fs-2); }
   background: var(--check-ink-thin) center / 16px no-repeat;
 }
 
+.base li.base-wide { grid-column: 1 / -1; }
+.base ul.base-sub { display: block; padding: var(--s1) 0 0; }
+.base ul.base-sub li { padding: 1px 0 1px var(--s4); color: var(--muted); }
+.base ul.base-sub li::before { width: 6px; height: 6px; top: 0.6em; left: 4px; border-radius: 50%; background: var(--ink); }
+.base ul.base-sub li strong { color: var(--ink); font-weight: 600; }
+.base ul.base-sub ul.base-sub { padding-top: 2px; }
+
 /* Passo 2: pacotes. */
 /* Respiro em cima e entre linhas para o selo, que passa da borda do cartão. */
 .packs { display: grid; gap: var(--s5) var(--s3); padding-top: var(--s2); grid-template-columns: repeat(auto-fill, minmax(min(100%, 280px), 1fr)); }
@@ -265,6 +272,8 @@ h2 { font-size: var(--fs-2); }
   cursor: pointer;
 }
 .card input.native:disabled { pointer-events: none; }
+/* O desenho do quadradinho fica por cima do input invisível: deixa o clique passar para ele. */
+.card:has(input.native) .mark { pointer-events: none; }
 .card:has(input.native:focus-visible) { outline: 3px solid var(--ink); outline-offset: -3px; }
 
 .row { display: grid; grid-template-columns: 24px minmax(0, 1fr) auto; align-items: start; gap: var(--s3); }
@@ -311,9 +320,16 @@ h2 { font-size: var(--fs-2); }
 .sub { font-size: var(--fs-4); color: var(--muted); }
 .sub:empty { display: none; }
 .card.qty { display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: center; column-gap: var(--s3); }
-.card.qty.on .ctrl { grid-column: 1 / -1; margin: var(--s2) 0 0 36px; }
-.card.qty:not(.on) .stepper button:first-child,
-.card.qty:not(.on) .stepper output { display: none; }
+/* Itens com quantidade: o quadradinho marca sozinho quando há quantidade; o contador "− 0 +" fica sempre na linha, compacto. */
+.card.qty .ctrl { flex-wrap: nowrap; }
+.card.qty .mark { cursor: pointer; position: relative; z-index: 1; }
+.card.qty .mark:focus-visible { outline: 3px solid var(--ink); outline-offset: 2px; }
+.card.qty .sub { display: none; }
+.card.qty .stepper { border-width: 1px; border-color: var(--line-strong); }
+.card.qty .stepper button { width: 36px; height: 36px; font-size: var(--fs-3); }
+.card.qty.on .stepper { border-color: var(--ink); }
+.card.qty .ctrl .price { min-width: 4.5rem; }
+
 .card.choice .ctrl { margin: var(--s2) 0 0 36px; }
 
 .stepper { display: inline-flex; align-items: center; flex: none; border: 2px solid var(--ink); border-radius: var(--r-pill); background: var(--white); }
@@ -610,7 +626,7 @@ h2 { font-size: var(--fs-2); }
       <section class="base panel" id="passo-1" aria-labelledby="base-title">
         <div class="base-head">
           <span class="step-num" aria-hidden="true">1</span>
-          <h2 id="base-title">Landing page</h2>
+          <h2 id="base-title">CTA efetivo</h2>
           <span class="price">R$ 1.000</span>
         </div>
         <details>
@@ -670,24 +686,39 @@ h2 { font-size: var(--fs-2); }
 
 <script>
 (function () {
-  var BASE = { name: "Landing page", price: 1000 };
+  var BASE = { name: "CTA efetivo", price: 1000 };
   var URGENCY = { id: "urgencia", name: "Urgência", rate: 0.3 };
   var MAX_QTY = 10;
   var SPLIT_ENTRY = 0.2;
 
   var BASE_LIST = [
-    "Página única que funciona no celular e no computador, com design sob medida",
-    "Até 5 seções",
-    "Texto trazido por você, com ajuste nosso",
-    "Sua identidade (logo, cores) e suas fotos, usadas como vieram",
-    "Botões de WhatsApp com mensagem pronta",
-    "1 rodada de revisão no layout e 1 no texto",
-    "SEO básico: título, descrição e prévia do link no WhatsApp e nas redes",
-    "Publicação no GitHub Pages, sem mensalidade de hospedagem",
-    "Ajustes de conteúdo por 30 dias depois da entrega",
-    "Blocos que aparecem ao rolar a página e rolagem suave (feito em todos os sites)",
-    "Perguntas frequentes em acordeão, quando ocupam uma das 5 seções",
-    "Sem rastreamento (nenhum Analytics, Pixel ou GTM)"
+    { title: "Funil de vendas completo: Hero / Provas / Garantia / CTA / Contato", sub: [
+      "Oportunidade: sonho de um futuro bom",
+      { title: "Mitigação de risco", sub: [
+        "Prova social: depoimentos",
+        "Prova lógica: metodologia funciona",
+        { title: "Prova de autoridade", sub: [
+          "Trajetória",
+          "Resultados",
+          "Empresas trabalhadas",
+          "Conquistas acumuladas ao longo do tempo"
+        ] },
+        "Garantia"
+      ] }
+    ] },
+    "Funciona no celular e PC",
+    "Até 5 seções (partes da página)",
+    "Você traz o texto",
+    "Você traz as fotos",
+    "Você traz suas cores e identidade da empresa",
+    "Você traz seu logo pronto",
+    "CTA pro WhatsApp, mensagem pronta",
+    "Suas redes sociais e localização",
+    "1 rodada de ajustes no visual e 1 no texto",
+    "SEO: pronta para o Google te encontrar",
+    "Publicação grátis no GitHub",
+    "30 dias de ajustes após a entrega",
+    "Animação leve ao rolar"
   ];
 
   var GROUPS = [
@@ -703,24 +734,26 @@ h2 { font-size: var(--fs-2); }
         done: "Orvanno" }
     ]},
     { title: "Imagens", items: [
-      { id: "fotos", name: "Tratamento de fotos", price: 250, type: "qty", unit: "por lote",
-        info: "Lote de até 10 fotos suas com luz, cor e recorte corrigidos, convertidas para WebP leve",
-        done: "Orvanno, Teia Ativa" },
-      { id: "img-ia", name: "Imagem de IA", price: 100, type: "qty",
-        info: "1 imagem ou ilustração gerada por IA no estilo do site, com o prompt guardado",
-        done: "Fiezta (todas), Orvanno (hero), Craftomakers (robôs)" },
-      { id: "lote-ia", name: "Lote de imagens de IA", price: 700, type: "qty", unit: "por lote",
-        info: "10 imagens de IA da mesma série (mesmo estilo, como num catálogo de produtos)",
-        done: "Fiezta (todas), Orvanno (90 acabamentos), Forja (todas)" },
-      { id: "galeria", name: "Galeria básica", price: 300, type: "toggle",
-        info: "Grade de até 12 fotos que ampliam ao toque, com passagem de uma para outra",
-        done: "Orvanno (cerca de 9 fotos)" },
-      { id: "prints", name: "Faixa de prints", price: 250, type: "toggle",
-        info: "Faixa de capturas de tela com rolagem lateral, até 20 imagens",
+      { id: "galeria-simples", name: "Galeria simples", price: 0, type: "toggle",
+        info: "Suas imagens direto na página, numa grade ou faixa com rolagem, sem zoom; até 20 imagens",
         done: "Fiezta (19 prints)" },
-      { id: "faixa-logos", name: "Faixa de logos", price: 200, type: "toggle",
-        info: "Faixa de logos de clientes ou parceiros passando sozinha, até 15 logos",
-        done: "Teia Ativa, Orvanno" }
+      { id: "galeria", name: "Galeria com painel e zoom", price: 300, type: "toggle",
+        info: "Até 12 fotos que abrem num painel ao toque, com zoom e passagem de uma para outra",
+        done: "Orvanno (cerca de 9 fotos)" },
+      { id: "mostruario", name: "Galeria com abas", price: 800, type: "toggle", from: true,
+        info: "Janela em tela cheia com as imagens separadas em abas (ex.: cores, acabamentos, modelos); tocar numa imagem mostra ela grande. Até 30 imagens em até 4 abas; acima disso, orçamento",
+        done: "Orvanno (cerca de 90 acabamentos)" }
+    ]},
+    { title: "Tratamento de imagens com IA", items: [
+      { id: "img-ia", name: "Geração de imagens", price: 60, type: "qty",
+        info: "Imagem ou ilustração criada por IA no estilo do site",
+        done: "Fiezta, Forja, Craftomakers (robôs)" },
+      { id: "fotos", name: "Melhoramento de imagem (limpeza, luz e etc)", price: 25, type: "qty",
+        info: "Sua foto tratada com IA para virar foto profissional: limpeza, luz, cor e recorte",
+        done: "Orvanno (fotos da loja e da galeria)" },
+      { id: "ampliacao", name: "Ampliação de imagem", price: 15, type: "qty",
+        info: "Sua imagem com mais resolução, sem perder qualidade, para ficar nítida em tela grande",
+        done: "Orvanno (texturas e puxadores do mostruário)" }
     ]},
     { title: "Texto e pesquisa", items: [
       { id: "texto", name: "Texto escrito do zero", price: 600, type: "toggle",
@@ -737,10 +770,10 @@ h2 { font-size: var(--fs-2); }
           { label: "Com degradê, ilustração ou muitos detalhes", price: 350 }
         ],
         info: "Seu logo redesenhado em vetor, sem perder nada do desenho: SVG e PNG com fundo transparente, nas versões colorida, clara (para fundo escuro) e de uma cor, e o ícone do site (favicon)" },
-      { id: "logo", name: "Logotipo criado", price: 800, type: "toggle",
+      { id: "logo", name: "Logotipo criado", price: 600, type: "toggle",
         info: "Logo novo: 2 propostas, 1 rodada de ajuste, entregue em SVG e PNG nas versões colorida, clara e de uma cor, mais o favicon",
         done: "CRM Forja (logo por IA, criado do zero), Craftomakers" },
-      { id: "paleta", name: "Paleta e tipografia", price: 900, type: "toggle",
+      { id: "paleta", name: "Paleta e tipografia", price: 500, type: "toggle",
         info: "Paleta de 5 a 7 cores com os códigos, 2 fontes de uso comercial liberado instaladas no site, e uma página com as regras de uso",
         done: "CRM Forja (do zero), Craftomakers, Fiezta, Teia Ativa" },
       { id: "tema", name: "Modo claro e escuro", price: 400, type: "toggle",
@@ -756,7 +789,19 @@ h2 { font-size: var(--fs-2); }
         done: "Orvanno, Forja, Teia Ativa, Fiezta" },
       { id: "idioma", name: "Idioma extra", price: 700, type: "qty", from: true,
         info: "A página inteira em outro idioma, com o texto adaptado (não traduzido palavra por palavra) e a troca de idioma no menu",
-        done: "Fiezta (inglês e português)" }
+        done: "Fiezta (inglês e português)" },
+      { id: "faq", name: "Seção FAQ", price: 250, type: "toggle",
+        info: "Seção de perguntas frequentes, que abrem e fecham ao toque",
+        done: "Fiezta (13 perguntas), Orvanno, CRM Forja" },
+      { id: "tabela", name: "Seção tabela comparativa", price: 250, type: "qty",
+        info: "Seção com uma tabela que compara opções lado a lado, com detalhes que abrem numa janela",
+        done: "Fiezta" },
+      { id: "abas", name: "Seção com filtro", price: 250, type: "qty",
+        info: "Seção com botões que filtram ou trocam o conteúdo (ofertas, planos, modelos) sem sair da página",
+        done: "Fiezta (layouts), Teia Ativa (3 ofertas por aba)" },
+      { id: "faixa-logos", name: "Seção parceiros com carrossel", price: 250, type: "toggle",
+        info: "Seção com os logos de clientes ou parceiros passando sozinhos, até 15 logos",
+        done: "Orvanno, Teia Ativa" }
     ]},
     { title: "Revisão e prazo", items: [
       { id: "revisao", name: "Rodada extra de revisão", price: 200, type: "qty",
@@ -775,24 +820,15 @@ h2 { font-size: var(--fs-2); }
         info: "Publicação no servidor que você contratar e paga, em vez do GitHub Pages" }
     ]},
     { title: "Interação e animação", items: [
-      { id: "carrossel", name: "Carrossel", price: 300, type: "qty",
-        info: "Carrossel de depoimentos, casos ou destaques, que funciona com o dedo e com setas",
-        done: "Teia Ativa, Orvanno, Craftomakers" },
-      { id: "menu", name: "Menu em tela cheia", price: 200, type: "toggle",
+      { id: "carrossel", name: "Carrossel", price: 200, type: "qty",
+        info: "Carrossel no header, de depoimentos ou de destaques, que funciona com o dedo e com setas. Para parceiros, use a Seção parceiros com carrossel",
+        done: "Craftomakers" },
+      { id: "menu", name: "Menu em tela cheia", price: 0, type: "toggle",
         info: "Menu que abre cobrindo a tela, com os links das seções",
         done: "Orvanno, Teia Ativa (no celular)" },
-      { id: "abas", name: "Seletor por abas", price: 500, type: "qty",
-        info: "Botões que trocam o conteúdo de um bloco (ofertas, planos, modelos) sem sair da página",
-        done: "Fiezta (layouts), Teia Ativa (3 ofertas por aba)" },
-      { id: "tabela", name: "Tabela comparativa", price: 500, type: "qty",
-        info: "Tabela que compara opções lado a lado, com detalhes que abrem numa janela",
-        done: "Fiezta" },
       { id: "hero", name: "Hero animado", price: 500, type: "toggle",
-        info: "Abertura da página com ilustração animada (SVG e CSS), leve e sem vídeo",
-        done: "Fiezta" },
-      { id: "mostruario", name: "Mostruário com abas", price: 800, type: "toggle", from: true,
-        info: "Janela com o mostruário dos produtos separado em abas, até 30 itens em até 4 abas; acima disso, orçamento. As imagens são suas ou entram como imagem de IA",
-        done: "Orvanno (cerca de 90 acabamentos)" },
+        info: "Abertura da página com animação: ilustração animada ou imagens que trocam sozinhas, leve e sem vídeo",
+        done: "Fiezta (ilustração animada), Orvanno (imagens com linha do tempo)" },
       { id: "slides", name: "Navegação por slides", price: 800, type: "toggle", from: true,
         info: "Página que avança como apresentação, de tela em tela, com efeito 3D nos cartões e faixas animadas",
         done: "Craftomakers" }
@@ -808,50 +844,51 @@ h2 { font-size: var(--fs-2); }
   ];
 
   var PACKS = [
-    { id: "p-whatsapp", name: "Conversão no WhatsApp", price: 700,
-      who: "Quem quer receber no WhatsApp contatos que já chegam dizendo o que querem",
+    { id: "p-whatsapp", name: "Mais pedidos no WhatsApp", price: 650,
+      who: "Quem quer que o contato já chegue dizendo o que quer",
+      save: "R$ 50 (cerca de 7%): o formulário e o FAQ saem do mesmo levantamento das dúvidas",
       ref: "Orvanno",
-      items: [{ id: "form-wa", qty: 1 }, { id: "barra-wa", qty: 1 },
-              { id: "secao", qty: 1, label: "Seção extra de perguntas frequentes" }] },
-    { id: "p-identidade", name: "Identidade completa", price: 1600,
-      who: "Quem não tem marca nenhuma: nem logo, nem cor, nem referência",
-      save: "R$ 100 (cerca de 6%): a paleta sai da mesma conversa e do mesmo estudo do logo",
+      items: [{ id: "form-wa", qty: 1 }, { id: "barra-wa", qty: 1 }, { id: "faq", qty: 1 }] },
+    { id: "p-identidade", name: "Marca do zero", price: 1000,
+      who: "Quem não tem logo, nem cores, nem fontes",
+      save: "R$ 100 (cerca de 9%): é uma conversa e um estudo só",
       ref: "CRM Forja",
       items: [{ id: "logo", qty: 1 }, { id: "paleta", qty: 1 }] },
-    { id: "p-visual", name: "Visual de impacto", price: 1500,
-      who: "Quem quer chamar a atenção logo na primeira tela",
-      save: "R$ 100 (cerca de 6%): a animação e as imagens saem da mesma direção visual",
-      ref: "Fiezta (hero animado, todas as imagens por IA), Orvanno",
-      items: [{ id: "hero", qty: 1 }, { id: "img-ia", qty: 6, label: "6 imagens de IA" },
-              { id: "carrossel", qty: 1, label: "1 carrossel" }, { id: "menu", qty: 1 }] },
-    { id: "p-mostruario", name: "Mostruário de produtos", price: 1350, from: true,
-      who: "Quem vende produto com muitas opções (acabamentos, modelos, cores)",
+    { id: "p-marca-pronta", name: "Marca pronta para o site", price: 650,
+      who: "Quem tem logo, mas só em imagem e sem cores definidas",
+      save: "R$ 50 (cerca de 7%): a paleta sai do logo vetorizado",
+      ref: "Fiezta, Orvanno, Teia Ativa",
+      items: [{ id: "vetor", qty: 1, label: "Vetorização do logo (traço simples)" }, { id: "paleta", qty: 1 }] },
+    { id: "p-visual", name: "Abertura que chama atenção", price: 750,
+      who: "Quem quer impressionar logo na primeira tela",
+      save: "R$ 50 (cerca de 6%): é uma direção visual só",
+      ref: "Fiezta, Orvanno",
+      items: [{ id: "hero", qty: 1 }, { id: "img-ia", qty: 5, label: "5 imagens geradas por IA" }] },
+    { id: "p-mostruario", name: "Mostruário de produtos", price: 1100, from: true,
+      who: "Quem vende produto com muitas opções",
+      save: "R$ 100 (cerca de 8%): as mesmas fotos são tratadas, ampliadas e organizadas de uma vez",
       ref: "Orvanno",
-      items: [{ id: "mostruario", qty: 1 }, { id: "galeria", qty: 1 },
-              { id: "fotos", qty: 1, label: "Tratamento de 10 fotos" }] },
-    { id: "p-pesquisa", name: "Pesquisa de mercado", price: 1200,
-      who: "Quem quer saber o que os concorrentes dizem e ter um texto que se diferencia deles",
-      save: "R$ 100 (cerca de 8%): o texto é escrito em cima da pesquisa, sem uma segunda rodada de briefing",
-      items: [{ id: "pesq-aprof", qty: 1 }, { id: "texto", qty: 1 }] },
-    { id: "p-internacional", name: "Internacional", price: 1000, from: true,
-      who: "Quem atende clientes de outro país ou em outra língua",
-      ref: "Fiezta",
-      items: [{ id: "idioma", qty: 1 }, { id: "seo", qty: 1, label: "SEO completo, com a indicação de cada idioma para o Google" }] }
+      items: [{ id: "mostruario", qty: 1 }, { id: "fotos", qty: 10, label: "Melhoramento de 10 imagens" },
+              { id: "ampliacao", qty: 10, label: "Ampliação de 10 imagens" }] },
+    { id: "p-pesquisa", name: "Texto que se diferencia", price: 1200,
+      who: "Quem quer um texto diferente do dos concorrentes",
+      save: "R$ 100 (cerca de 8%): o texto é escrito em cima da pesquisa",
+      items: [{ id: "pesq-aprof", qty: 1 }, { id: "texto", qty: 1 }] }
   ];
 
   var PRESETS = [
     { id: "orvanno", name: "Orvanno",
       packs: ["p-whatsapp", "p-mostruario"],
-      items: { "secao": 4, "carrossel": 1, "menu": 1, "faixa-logos": 1, "img-ia": 1, "pagina": 1, "seo": 1, "dominio": 1 } },
+      items: { "secao": 4, "galeria": 1, "hero": 1, "menu": 1, "faixa-logos": 1, "pagina": 1, "seo": 1, "dominio": 1 } },
     { id: "teia-ativa", name: "Teia Ativa",
       packs: [],
-      items: { "secao": 4, "form-wa": 1, "contatos": 1, "carrossel": 1, "faixa-logos": 1, "menu": 1, "abas": 1, "tema": 1, "fotos": 1, "pagina": 1, "seo": 1, "dominio": 1 } },
+      items: { "secao": 4, "form-wa": 1, "contatos": 1, "faixa-logos": 1, "menu": 1, "abas": 1, "tema": 1, "pagina": 1, "seo": 1, "dominio": 1 } },
     { id: "crm-forja", name: "CRM Forja",
       packs: ["p-identidade"],
-      items: { "secao": 2, "lote-ia": 1, "pagina": 2 } },
+      items: { "secao": 2, "img-ia": 10, "pagina": 2 } },
     { id: "fiezta", name: "Fiezta",
-      packs: ["p-identidade", "p-visual", "p-internacional"],
-      items: { "secao": 6, "tabela": 1, "prints": 1, "lote-ia": 1, "tema": 1, "pagina": 1 } }
+      packs: ["p-marca-pronta", "p-visual"],
+      items: { "idioma": 1, "seo": 1, "secao": 6, "tabela": 1, "galeria-simples": 1, "img-ia": 10, "tema": 1, "pagina": 1 } }
   ];
 
   var state = {};
@@ -864,6 +901,7 @@ h2 { font-size: var(--fs-2); }
   PACKS.forEach(function (p) { packState[p.id] = false; });
 
   function brl(n) {
+    if (n === 0) return "Grátis";
     return "R$ " + Math.round(n).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
   }
   function el(tag, cls, text) {
@@ -932,7 +970,16 @@ h2 { font-size: var(--fs-2); }
 
   function buildBase() {
     var ul = document.getElementById("base-list");
-    BASE_LIST.forEach(function (t) { ul.appendChild(el("li", null, t)); });
+    function baseItem(t, cls) {
+      if (typeof t === "string") return el("li", cls, t);
+      var li = el("li", cls);
+      li.appendChild(el("strong", null, t.title));
+      var sub = el("ul", "base-sub");
+      t.sub.forEach(function (x) { sub.appendChild(baseItem(x)); });
+      li.appendChild(sub);
+      return li;
+    }
+    BASE_LIST.forEach(function (t) { ul.appendChild(baseItem(t, typeof t === "string" ? null : "base-wide")); });
   }
 
   function buildPacks() {
@@ -1066,6 +1113,27 @@ h2 { font-size: var(--fs-2); }
           ctrl.appendChild(st);
           ctrl.appendChild(sub);
           card.appendChild(ctrl);
+          ctrl.appendChild(price); /* preço no fim da linha, depois do contador */
+          // O quadradinho também funciona: marcar põe 1; desmarcar zera.
+          mark.removeAttribute("aria-hidden");
+          mark.setAttribute("role", "checkbox");
+          mark.setAttribute("tabindex", "0");
+          mark.setAttribute("aria-label", it.name);
+          mark.setAttribute("aria-checked", "false");
+          var toggleQty = function () {
+            state[it.id] = state[it.id] > 0 ? 0 : 1;
+            handleManualChange();
+          };
+          // Clicar em qualquer ponto da linha (menos no (i) e no contador) marca e desmarca, como nos outros itens.
+          row.addEventListener("click", function (e) {
+            if (e.target.closest(".ibtn, .pop, .ctrl")) return;
+            toggleQty();
+          });
+          row.style.cursor = "pointer";
+          mark.addEventListener("keydown", function (e) {
+            if (e.key === " " || e.key === "Enter") { e.preventDefault(); toggleQty(); }
+          });
+          r.mark = mark;
           r.out = out; r.minus = minus; r.plus = plus; r.sub = sub;
         }
 
@@ -1091,6 +1159,13 @@ h2 { font-size: var(--fs-2); }
           });
           ctrl2.appendChild(fs);
           card.appendChild(ctrl2);
+          // Na linha da vetorização, clicar marca a primeira opção; clicar de novo desmarca.
+          row.addEventListener("click", function (e) {
+            if (e.target.closest(".ibtn, .pop, .ctrl")) return;
+            state[it.id] = state[it.id] > 0 ? 0 : 1;
+            handleManualChange();
+          });
+          row.style.cursor = "pointer";
         }
 
         refs[it.id] = r;
@@ -1237,6 +1312,7 @@ h2 { font-size: var(--fs-2); }
         var total = c + q;
         r.card.classList.toggle("on", total > 0);
         r.card.classList.toggle("inc", c > 0 && q === 0);
+        r.mark.setAttribute("aria-checked", q > 0 ? "true" : "false");
         r.out.textContent = total;
         r.minus.disabled = q === 0;
         r.plus.disabled = q === MAX_QTY;
@@ -1256,7 +1332,22 @@ h2 { font-size: var(--fs-2); }
           setPrice(r.price, prefix + brl(it.price), false, unit);
           r.sub.textContent = "";
         }
+      } else if (c > 0) {
+        // Vetorização dentro de um pacote: a opção simples já está paga; a com detalhes cobra só a diferença.
+        var qc = q > 0 ? q : 1;
+        r.card.classList.toggle("on", true);
+        r.card.classList.toggle("inc", qc === 1);
+        r.radios.forEach(function (rd, i) { rd.checked = qc === i + 1; });
+        if (qc === 2) {
+          var diff = it.options[1].price - it.options[0].price;
+          subtotal += diff;
+          lines.push([it.name + " (com detalhes, diferença)", diff]);
+          setPrice(r.price, brl(diff));
+        } else {
+          setPrice(r.price, "Incluído no pacote", true);
+        }
       } else {
+        r.card.classList.toggle("inc", false);
         r.card.classList.toggle("on", q > 0);
         r.radios.forEach(function (rd, i) { rd.checked = q === i + 1; });
         if (q > 0) {
