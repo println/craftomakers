@@ -184,6 +184,15 @@ h2 { font-size: var(--fs-2); }
 .base ul.base-sub li strong { color: var(--ink); font-weight: 600; }
 .base ul.base-sub ul.base-sub { padding-top: 2px; }
 
+#lines li.hours-total { border-top: 1px solid var(--line); margin-top: var(--s2); padding-top: var(--s2); font-weight: 600; }
+#lines li.hours-money { font-weight: 600; }
+
+.hours-box { margin: var(--s2) 0 var(--s3); padding: var(--s3); border: 1px solid var(--line-strong); border-radius: 12px; background: var(--paper); font-size: var(--fs-4); }
+.hours-box > div { display: flex; justify-content: space-between; gap: var(--s3); padding: 2px 0; }
+.hours-box strong { font-variant-numeric: tabular-nums; }
+.hours-box .hb-money { margin-top: var(--s1); padding-top: var(--s2); border-top: 1px solid var(--line); font-weight: 700; }
+.hours-box[hidden] { display: none; }
+
 /* Passo 2: pacotes. */
 /* Respiro em cima e entre linhas para o selo, que passa da borda do cartão. */
 .packs { display: grid; gap: var(--s5) var(--s3); padding-top: var(--s2); grid-template-columns: repeat(auto-fill, minmax(min(100%, 280px), 1fr)); }
@@ -250,7 +259,7 @@ h2 { font-size: var(--fs-2); }
 }
 .acc:active, .list .card.toggle:active, .card.pack:active { background-color: rgba(17, 17, 17, 0.06); }
 .acc:focus-visible { outline-offset: -3px; }
-.list { border-top: 1px solid var(--line); }
+.list { border-top: 1px solid var(--line); container: lista / inline-size; }
 .list[hidden] { display: none; }
 .list .card { padding: var(--s3) var(--s4); border-top: 1px solid var(--line); }
 .list .card:first-child { border-top: 0; }
@@ -329,6 +338,24 @@ h2 { font-size: var(--fs-2); }
 .card.qty .stepper button { width: 36px; height: 36px; font-size: var(--fs-3); }
 .card.qty.on .stepper { border-color: var(--ink); }
 .card.qty .ctrl .price { min-width: 4.5rem; }
+/* No celular: nome na linha de cima, inteiro; contador e horas na linha de baixo, à direita. */
+/* Lista estreita (pela largura da própria lista, não da tela): nome inteiro em cima;
+   embaixo, à direita, o contador e as horas — igual em todos os itens. */
+@container lista (max-width: 560px) {
+  .card.qty { grid-template-columns: minmax(0, 1fr); }
+  .card.qty .ctrl { justify-content: flex-end; margin: var(--s2) 0 0; }
+  /* Coluna das horas com largura fixa: os contadores ficam todos alinhados;
+     o "a partir de" vai em cima das horas, pequeno. */
+  .card.qty .ctrl .price { width: 5.5rem; min-width: 5.5rem; max-width: 5.5rem; text-align: right; }
+  .row { grid-template-columns: 24px minmax(0, 1fr); grid-template-areas: "mark info" ". price"; row-gap: var(--s2); }
+  .row .mark { grid-area: mark; }
+  .row .info { grid-area: info; }
+  .row .price { grid-area: price; max-width: none; text-align: right; justify-self: end; }
+  .price .pre { display: block; margin: 0; font-size: 0.8125rem; line-height: 1.2; }
+  /* O (i) vai para o canto direito da linha do nome, alinhado com a coluna das horas. */
+  .card .ibtn { position: absolute; top: 2px; right: 3px; margin: 0; }
+  .card .info { padding-right: 28px; }
+}
 
 .card.choice .ctrl { margin: var(--s2) 0 0 36px; }
 
@@ -483,7 +510,7 @@ h2 { font-size: var(--fs-2); }
 .split dd { margin: 0; font-weight: 600; font-variant-numeric: tabular-nums; }
 .from-note, .fixed-note { font-size: var(--fs-4); line-height: 1.45; color: var(--muted); }
 .from-note { margin: var(--s3) 0 0; }
-.fixed-note { margin: var(--s3) 0 0; padding-top: var(--s3); border-top: 1px solid var(--line); }
+.fixed-note { margin: var(--s3) 0 0; padding: var(--s3); border: 1px solid var(--line); border-radius: 12px; background: var(--paper); }
 
 /* Ação principal: pílula laranja, largura total, texto em tinta (6,0:1). */
 .cta {
@@ -578,13 +605,7 @@ h2 { font-size: var(--fs-2); }
 }
 /* Item no celular estreito: preço (ou "Incluído no pacote") na segunda linha, sob o nome;
    o "+" fica sozinho à direita. */
-@media (max-width: 479px) {
-  .list .row { grid-template-columns: 24px minmax(0, 1fr); grid-template-areas: "mark info" ". price"; row-gap: 2px; }
-  .list .row .mark { grid-area: mark; }
-  .list .row .info { grid-area: info; }
-  .list .row .price { grid-area: price; max-width: none; text-align: left; }
-  .list .price .pre { display: inline; }
-}
+
 @keyframes sheet-in { from { opacity: 0; transform: translateY(24px); } }
 @media (min-width: 900px) {
   body { padding-bottom: 0; }
@@ -659,6 +680,11 @@ h2 { font-size: var(--fs-2); }
     <aside class="summary panel" id="summary" aria-labelledby="summary-title">
       <h2 id="summary-title">Seu pedido</h2>
       <ul class="lines" id="lines"></ul>
+      <div class="hours-box" id="hours-box" hidden>
+        <div><span>Total de horas</span><strong id="hb-hours"></strong></div>
+        <div><span>Valor da hora</span><strong id="hb-rate"></strong></div>
+        <div class="hb-money"><span>Horas × valor da hora</span><strong id="hb-money"></strong></div>
+      </div>
       <div class="total-row" id="total-row">
         <span class="total-label" id="total-label">Total</span>
         <span class="total-val" id="total" aria-live="polite" aria-atomic="true"></span>
@@ -688,7 +714,7 @@ h2 { font-size: var(--fs-2); }
 (function () {
   var BASE = { name: "CTA efetivo", price: 1000 };
   var URGENCY = { id: "urgencia", name: "Urgência", rate: 0.3 };
-  var MAX_QTY = 10;
+  var MAX_QTY = 100;
   var SPLIT_ENTRY = 0.2;
 
   var BASE_LIST = [
@@ -723,13 +749,13 @@ h2 { font-size: var(--fs-2); }
 
   var GROUPS = [
     { title: "WhatsApp e conversão", items: [
-      { id: "form-wa", name: "Formulário para o WhatsApp", price: 350, type: "toggle",
+      { id: "form-wa", name: "Formulário para o WhatsApp", hours: 3, type: "toggle",
         info: "Formulário curto (até 6 campos) que monta a mensagem e abre o WhatsApp já com o pedido do visitante. Nada é guardado nem enviado para outro lugar",
         done: "Orvanno (bairros por cidade), Teia Ativa (escolhe o especialista)" },
-      { id: "contatos", name: "Vários contatos de WhatsApp", price: 150, type: "toggle",
+      { id: "contatos", name: "Vários contatos de WhatsApp", hours: 1.25, type: "toggle",
         info: "O visitante escolhe com quem falar; cada pessoa da equipe tem o seu número e a sua mensagem",
         done: "Teia Ativa" },
-      { id: "barra-wa", name: "Barra fixa de WhatsApp", price: 100, type: "toggle",
+      { id: "barra-wa", name: "Barra fixa de WhatsApp", hours: 0.75, type: "toggle",
         info: "Barra com o botão do WhatsApp que fica sempre visível no celular",
         done: "Orvanno" }
     ]},
@@ -737,149 +763,153 @@ h2 { font-size: var(--fs-2); }
       { id: "galeria-simples", name: "Galeria simples", price: 0, type: "toggle",
         info: "Suas imagens direto na página, numa grade ou faixa com rolagem, sem zoom; até 20 imagens",
         done: "Fiezta (19 prints)" },
-      { id: "galeria", name: "Galeria com painel e zoom", price: 300, type: "toggle",
+      { id: "galeria", name: "Galeria com painel e zoom", hours: 2, type: "toggle",
         info: "Até 12 fotos que abrem num painel ao toque, com zoom e passagem de uma para outra",
         done: "Orvanno (cerca de 9 fotos)" },
-      { id: "mostruario", name: "Galeria com abas", price: 800, type: "toggle", from: true,
+      { id: "mostruario", name: "Galeria com abas", hours: 6, type: "toggle", from: true,
         info: "Janela em tela cheia com as imagens separadas em abas (ex.: cores, acabamentos, modelos); tocar numa imagem mostra ela grande. Até 30 imagens em até 4 abas; acima disso, orçamento",
         done: "Orvanno (cerca de 90 acabamentos)" }
     ]},
     { title: "Tratamento de imagens com IA", items: [
-      { id: "img-ia", name: "Geração de imagens", price: 60, type: "qty",
+      { id: "img-ia", name: "Geração de imagens", hours: 0.5, type: "qty",
         info: "Imagem ou ilustração criada por IA no estilo do site",
         done: "Fiezta, Forja, Craftomakers (robôs)" },
-      { id: "fotos", name: "Melhoramento de imagem (limpeza, luz e etc)", price: 25, type: "qty",
+      { id: "fotos", name: "Melhoramento de imagem (limpeza, luz e etc)", hours: 0.2, type: "qty",
         info: "Sua foto tratada com IA para virar foto profissional: limpeza, luz, cor e recorte",
-        done: "Orvanno (fotos da loja e da galeria)" },
-      { id: "ampliacao", name: "Ampliação de imagem", price: 15, type: "qty",
+        done: "Orvanno (9: 3 fotos da loja e 6 da galeria)" },
+      { id: "ampliacao", name: "Ampliação de imagem", hours: 0.05, type: "qty",
         info: "Sua imagem com mais resolução, sem perder qualidade, para ficar nítida em tela grande",
-        done: "Orvanno (texturas e puxadores do mostruário)" }
+        done: "Orvanno (90: 33 revestimentos e 57 puxadores do mostruário)" }
     ]},
     { title: "Texto e pesquisa", items: [
-      { id: "texto", name: "Texto escrito do zero", price: 600, type: "toggle",
+      { id: "texto", name: "Texto escrito do zero", hours: 5, type: "toggle",
         info: "Texto de todas as seções, escrito a partir do briefing, com título, chamadas e botões. Até 6 seções; proposta: R$ 100 por seção acima disso" },
-      { id: "pesq-basica", name: "Pesquisa básica", price: 300, type: "toggle",
+      { id: "pesq-basica", name: "Pesquisa básica", hours: 1.75, type: "toggle",
         info: "Ficha de 3 concorrentes (promessa, oferta, prova, ação) usada no texto" },
-      { id: "pesq-aprof", name: "Pesquisa aprofundada", price: 700, type: "toggle",
+      { id: "pesq-aprof", name: "Pesquisa aprofundada", hours: 5.5, type: "toggle",
         info: "Relatório de 2 a 4 páginas, em PDF: 8 a 10 concorrentes, tabela comparativa, a lacuna que você pode afirmar, as objeções e os termos de busca do público" }
     ]},
     { title: "Identidade visual", items: [
       { id: "vetor", name: "Vetorização do logo", type: "choice",
         options: [
-          { label: "Logo de traço simples, até 3 cores", price: 200 },
-          { label: "Com degradê, ilustração ou muitos detalhes", price: 350 }
+          { label: "Logo de traço simples, até 3 cores", short: "simples", hours: 1.5 },
+          { label: "Com degradê, ilustração ou muitos detalhes", short: "com detalhes", hours: 3 }
         ],
         info: "Seu logo redesenhado em vetor, sem perder nada do desenho: SVG e PNG com fundo transparente, nas versões colorida, clara (para fundo escuro) e de uma cor, e o ícone do site (favicon)" },
-      { id: "logo", name: "Logotipo criado", price: 600, type: "toggle",
+      { id: "logo", name: "Logotipo criado", hours: 5, type: "toggle",
         info: "Logo novo: 2 propostas, 1 rodada de ajuste, entregue em SVG e PNG nas versões colorida, clara e de uma cor, mais o favicon",
         done: "CRM Forja (logo por IA, criado do zero), Craftomakers" },
-      { id: "paleta", name: "Paleta e tipografia", price: 500, type: "toggle",
+      { id: "paleta", name: "Paleta e tipografia", hours: 2.5, type: "toggle",
         info: "Paleta de 5 a 7 cores com os códigos, 2 fontes de uso comercial liberado instaladas no site, e uma página com as regras de uso",
         done: "CRM Forja (do zero), Craftomakers, Fiezta, Teia Ativa" },
-      { id: "tema", name: "Modo claro e escuro", price: 400, type: "toggle",
+      { id: "tema", name: "Modo claro e escuro", hours: 3, type: "toggle",
         info: "Botão que troca o site entre tema claro e escuro, guardando a escolha do visitante",
         done: "Teia Ativa, Fiezta (tema secreto com som)" }
     ]},
     { title: "Estrutura", items: [
-      { id: "secao", name: "Seção extra", price: 250, type: "qty",
+      { id: "secao", name: "Seção extra", hours: 1.75, type: "qty",
         info: "Uma seção a mais na página, com o layout e o texto que você trouxe",
         done: "todos os sites (7 a 11 seções)" },
-      { id: "pagina", name: "Página extra", price: 200, type: "qty",
+      { id: "pagina", name: "Página extra", hours: 1, type: "qty",
         info: "Uma página simples a mais: privacidade, 404, sobre, serviços, contato ou doação. Página com várias seções soma as seções",
         done: "Orvanno, Forja, Teia Ativa, Fiezta" },
-      { id: "idioma", name: "Idioma extra", price: 700, type: "qty", from: true,
+      { id: "idioma", name: "Idioma extra", hours: 5, type: "qty", from: true,
         info: "A página inteira em outro idioma, com o texto adaptado (não traduzido palavra por palavra) e a troca de idioma no menu",
         done: "Fiezta (inglês e português)" },
-      { id: "faq", name: "Seção FAQ", price: 250, type: "toggle",
+      { id: "faq", name: "Seção FAQ", hours: 1.75, type: "toggle",
         info: "Seção de perguntas frequentes, que abrem e fecham ao toque",
         done: "Fiezta (13 perguntas), Orvanno, CRM Forja" },
-      { id: "tabela", name: "Seção tabela comparativa", price: 250, type: "qty",
+      { id: "tabela", name: "Seção tabela comparativa", hours: 3.25, type: "qty",
         info: "Seção com uma tabela que compara opções lado a lado, com detalhes que abrem numa janela",
         done: "Fiezta" },
-      { id: "abas", name: "Seção com filtro", price: 250, type: "qty",
+      { id: "abas", name: "Seção com filtro", hours: 2.25, type: "qty",
         info: "Seção com botões que filtram ou trocam o conteúdo (ofertas, planos, modelos) sem sair da página",
         done: "Fiezta (layouts), Teia Ativa (3 ofertas por aba)" },
-      { id: "faixa-logos", name: "Seção parceiros com carrossel", price: 250, type: "toggle",
+      { id: "faixa-logos", name: "Seção parceiros com carrossel", hours: 1.75, type: "toggle",
         info: "Seção com os logos de clientes ou parceiros passando sozinhos, até 15 logos",
         done: "Orvanno, Teia Ativa" }
     ]},
     { title: "Revisão e prazo", items: [
-      { id: "revisao", name: "Rodada extra de revisão", price: 200, type: "qty",
+      { id: "revisao", name: "Rodada extra de revisão", hours: 1, type: "qty",
         info: "Mais uma rodada de ajustes no layout ou no texto, antes da entrega" },
       { id: "urgencia", name: URGENCY.name, rate: URGENCY.rate, type: "toggle",
         info: "Entrega na metade do prazo" }
     ]},
     { title: "Google e publicação", items: [
-      { id: "seo", name: "SEO completo", price: 300, type: "toggle",
+      { id: "seo", name: "SEO completo", hours: 1.25, type: "toggle",
         info: "Dados estruturados do negócio para o Google, mapa do site (sitemap), robots.txt e, com mais de um idioma, a indicação de cada idioma para o Google",
         done: "Orvanno, Teia Ativa, Fiezta" },
-      { id: "dominio", name: "Ligação do domínio", price: 100, type: "toggle",
+      { id: "dominio", name: "Ligação do domínio", hours: 0.75, type: "toggle",
         info: "Seu domínio (que você registra e paga) apontado para o site, com HTTPS",
         done: "Teia Ativa, Orvanno" },
-      { id: "servidor", name: "Servidor pago", price: 250, type: "toggle",
+      { id: "servidor", name: "Servidor pago", hours: 2, type: "toggle",
         info: "Publicação no servidor que você contratar e paga, em vez do GitHub Pages" }
     ]},
     { title: "Interação e animação", items: [
-      { id: "carrossel", name: "Carrossel", price: 200, type: "qty",
+      { id: "carrossel", name: "Carrossel", hours: 1.75, type: "qty",
         info: "Carrossel no header, de depoimentos ou de destaques, que funciona com o dedo e com setas. Para parceiros, use a Seção parceiros com carrossel",
         done: "Craftomakers" },
       { id: "menu", name: "Menu em tela cheia", price: 0, type: "toggle",
         info: "Menu que abre cobrindo a tela, com os links das seções",
         done: "Orvanno, Teia Ativa (no celular)" },
-      { id: "hero", name: "Hero animado", price: 500, type: "toggle",
-        info: "Abertura da página com animação: ilustração animada ou imagens que trocam sozinhas, leve e sem vídeo",
+      { id: "hero", name: "Hero animado", type: "choice", legend: "tipo de animação",
+        options: [
+          { label: "Imagens que trocam sozinhas", short: "imagens que trocam", hours: 3 },
+          { label: "Ilustração animada", short: "ilustração animada", hours: 6 }
+        ],
+        info: "Abertura da página com animação: imagens que trocam sozinhas ou ilustração animada, leve e sem vídeo",
         done: "Fiezta (ilustração animada), Orvanno (imagens com linha do tempo)" },
-      { id: "slides", name: "Navegação por slides", price: 800, type: "toggle", from: true,
+      { id: "slides", name: "Navegação por slides", hours: 6, type: "toggle", from: true,
         info: "Página que avança como apresentação, de tela em tela, com efeito 3D nos cartões e faixas animadas",
         done: "Craftomakers" }
     ]},
     { title: "Documentos no navegador", items: [
-      { id: "form-longo", name: "Formulário longo com PDF", price: 1200, type: "toggle", from: true,
+      { id: "form-longo", name: "Formulário longo com PDF", hours: 10, type: "toggle", from: true,
         info: "Questionário longo (dezenas de perguntas) que guarda as respostas no aparelho do visitante e gera um PDF no próprio navegador",
         done: "Craftomakers (briefing, cerca de 90 perguntas)" },
-      { id: "pdf", name: "PDF a partir de texto", price: 400, type: "toggle",
+      { id: "pdf", name: "PDF a partir de texto", hours: 3, type: "toggle",
         info: "Um manual ou guia em PDF diagramado com a sua identidade",
         done: "Orvanno (manual de uso das campanhas)" }
     ]}
   ];
 
   var PACKS = [
-    { id: "p-whatsapp", name: "Mais pedidos no WhatsApp", price: 650,
+    { id: "p-whatsapp", name: "Mais pedidos no WhatsApp", off: 0.07,
       who: "Quem quer que o contato já chegue dizendo o que quer",
-      save: "R$ 50 (cerca de 7%): o formulário e o FAQ saem do mesmo levantamento das dúvidas",
+      why: "o formulário e o FAQ saem do mesmo levantamento das dúvidas",
       ref: "Orvanno",
       items: [{ id: "form-wa", qty: 1 }, { id: "barra-wa", qty: 1 }, { id: "faq", qty: 1 }] },
-    { id: "p-identidade", name: "Marca do zero", price: 1000,
+    { id: "p-identidade", name: "Marca do zero", off: 0.09,
       who: "Quem não tem logo, nem cores, nem fontes",
-      save: "R$ 100 (cerca de 9%): é uma conversa e um estudo só",
+      why: "é uma conversa e um estudo só",
       ref: "CRM Forja",
       items: [{ id: "logo", qty: 1 }, { id: "paleta", qty: 1 }] },
-    { id: "p-marca-pronta", name: "Marca pronta para o site", price: 650,
+    { id: "p-marca-pronta", name: "Marca pronta para o site", off: 0.07,
       who: "Quem tem logo, mas só em imagem e sem cores definidas",
-      save: "R$ 50 (cerca de 7%): a paleta sai do logo vetorizado",
+      why: "a paleta sai do logo vetorizado",
       ref: "Fiezta, Orvanno, Teia Ativa",
       items: [{ id: "vetor", qty: 1, label: "Vetorização do logo (traço simples)" }, { id: "paleta", qty: 1 }] },
-    { id: "p-visual", name: "Abertura que chama atenção", price: 750,
+    { id: "p-visual", name: "Abertura que chama atenção", off: 0.07,
       who: "Quem quer impressionar logo na primeira tela",
-      save: "R$ 50 (cerca de 6%): é uma direção visual só",
+      why: "é uma direção visual só",
       ref: "Fiezta, Orvanno",
       items: [{ id: "hero", qty: 1 }, { id: "img-ia", qty: 5, label: "5 imagens geradas por IA" }] },
-    { id: "p-mostruario", name: "Mostruário de produtos", price: 1100, from: true,
+    { id: "p-mostruario", name: "Mostruário de produtos", off: 0.08, from: true,
       who: "Quem vende produto com muitas opções",
-      save: "R$ 100 (cerca de 8%): as mesmas fotos são tratadas, ampliadas e organizadas de uma vez",
+      why: "as mesmas fotos são tratadas, ampliadas e organizadas de uma vez",
       ref: "Orvanno",
       items: [{ id: "mostruario", qty: 1 }, { id: "fotos", qty: 10, label: "Melhoramento de 10 imagens" },
               { id: "ampliacao", qty: 10, label: "Ampliação de 10 imagens" }] },
-    { id: "p-pesquisa", name: "Texto que se diferencia", price: 1200,
+    { id: "p-pesquisa", name: "Texto que se diferencia", off: 0.07,
       who: "Quem quer um texto diferente do dos concorrentes",
-      save: "R$ 100 (cerca de 8%): o texto é escrito em cima da pesquisa",
+      why: "o texto é escrito em cima da pesquisa",
       items: [{ id: "pesq-aprof", qty: 1 }, { id: "texto", qty: 1 }] }
   ];
 
   var PRESETS = [
     { id: "orvanno", name: "Orvanno",
       packs: ["p-whatsapp", "p-mostruario"],
-      items: { "secao": 4, "galeria": 1, "hero": 1, "menu": 1, "faixa-logos": 1, "pagina": 1, "seo": 1, "dominio": 1 } },
+      items: { "secao": 4, "galeria": 1, "ampliacao": 80, "hero": 1, "menu": 1, "faixa-logos": 1, "pagina": 1, "seo": 1, "dominio": 1 } },
     { id: "teia-ativa", name: "Teia Ativa",
       packs: [],
       items: { "secao": 4, "form-wa": 1, "contatos": 1, "faixa-logos": 1, "menu": 1, "abas": 1, "tema": 1, "pagina": 1, "seo": 1, "dominio": 1 } },
@@ -888,8 +918,45 @@ h2 { font-size: var(--fs-2); }
       items: { "secao": 2, "img-ia": 10, "pagina": 2 } },
     { id: "fiezta", name: "Fiezta",
       packs: ["p-marca-pronta", "p-visual"],
-      items: { "idioma": 1, "seo": 1, "secao": 6, "tabela": 1, "galeria-simples": 1, "img-ia": 10, "tema": 1, "pagina": 1 } }
+      items: { "hero": 2, "idioma": 1, "seo": 1, "secao": 6, "tabela": 1, "galeria-simples": 1, "img-ia": 10, "tema": 1, "pagina": 1 } }
   ];
+
+
+  // Preço por hora: cada item tem as horas de trabalho; o preço é horas × valor da hora.
+  var HOUR_RATE = 80;
+  function hoursToMoney(h) { return h * HOUR_RATE; }
+  // Mostra horas a partir do valor em dinheiro (valor ÷ valor da hora).
+  // Horas no formato hh:mm (ex.: 1,25 h → 01:15).
+  function hhmm(h) {
+    var m = Math.round(h * 60);
+    var hh = Math.floor(m / 60), mm = m % 60;
+    return (hh < 10 ? "0" : "") + hh + ":" + (mm < 10 ? "0" : "") + mm;
+  }
+  function hrs(v) {
+    if (v === 0) return "Grátis";
+    return hhmm(v / HOUR_RATE);
+  }
+  GROUPS.forEach(function (g) {
+    g.items.forEach(function (it) {
+      if (it.hours != null) it.price = hoursToMoney(it.hours);
+      if (it.options) it.options.forEach(function (o) { if (o.hours != null) o.price = hoursToMoney(o.hours); });
+    });
+  });
+  (function () {
+    var all = {};
+    GROUPS.forEach(function (g) { g.items.forEach(function (it) { all[it.id] = it; }); });
+    PACKS.forEach(function (p) {
+      var sum = p.items.reduce(function (acc, ref) {
+        var it = all[ref.id];
+        return acc + (it.options ? it.options[0].price : it.price * ref.qty);
+      }, 0);
+      var sumH = sum / HOUR_RATE;
+      var packH = Math.round(sumH * (1 - p.off) * 4) / 4;
+      p.price = packH * HOUR_RATE;
+      var cutH = Math.round((sumH - packH) * 100) / 100;
+      if (cutH > 0) p.save = hhmm(cutH) + " a menos (cerca de " + Math.round(cutH / sumH * 100) + "%): " + p.why;
+    });
+  })();
 
   var state = {};
   var packState = {};
@@ -1013,7 +1080,7 @@ h2 { font-size: var(--fs-2); }
       info.appendChild(name);
       var price = el("span", "price");
       if (p.from) price.appendChild(el("span", "pre", "a partir de"));
-      price.appendChild(el("span", "v", brl(p.price)));
+      price.appendChild(el("span", "v", hrs(p.price)));
       row.appendChild(mark);
       row.appendChild(info);
       row.appendChild(price);
@@ -1140,7 +1207,7 @@ h2 { font-size: var(--fs-2); }
         if (it.type === "choice") {
           var ctrl2 = el("div", "ctrl");
           var fs = el("fieldset", "seg");
-          fs.appendChild(el("legend", null, it.name + ": tipo de logo"));
+          fs.appendChild(el("legend", null, it.name + ": " + (it.legend || "tipo de logo")));
           r.radios = [];
           it.options.forEach(function (o, oi) {
             var lab = el("label", "opt");
@@ -1153,7 +1220,7 @@ h2 { font-size: var(--fs-2); }
               handleManualChange();
             });
             lab.appendChild(rd);
-            lab.appendChild(document.createTextNode(o.label + " · " + brl(o.price)));
+            lab.appendChild(document.createTextNode(o.label + " · " + hrs(o.price)));
             fs.appendChild(lab);
             r.radios.push(rd);
           });
@@ -1266,7 +1333,7 @@ h2 { font-size: var(--fs-2); }
 
   function update() {
     var subtotal = BASE.price;
-    var lines = [[BASE.name, BASE.price]];
+    var lines = [[BASE.name, BASE.price, "money"]];
     var hasFrom = false;
     var cov = {};
 
@@ -1301,7 +1368,7 @@ h2 { font-size: var(--fs-2); }
         } else if (covered) {
           setPrice(r.price, "Incluído no pacote", true);
         } else {
-          setPrice(r.price, prefix + brl(it.price));
+          setPrice(r.price, prefix + hrs(it.price));
           if (q > 0) {
             subtotal += it.price;
             lines.push([it.name, it.price]);
@@ -1323,13 +1390,13 @@ h2 { font-size: var(--fs-2); }
           subtotal += value;
           lines.push([it.name + " × " + q + (c > 0 ? " (além do pacote)" : ""), value]);
           if (it.from) hasFrom = true;
-          setPrice(r.price, prefix + brl(value));
-          r.sub.textContent = (c > 0 ? c + " no pacote + " : "") + q + " × " + brl(it.price);
+          setPrice(r.price, prefix + hrs(value));
+          r.sub.textContent = (c > 0 ? c + " no pacote + " : "") + q + " × " + hrs(it.price);
         } else if (c > 0) {
           setPrice(r.price, "Incluído no pacote", true);
           r.sub.textContent = c + (c === 1 ? " incluído" : " incluídos") + " no pacote";
         } else {
-          setPrice(r.price, prefix + brl(it.price), false, unit);
+          setPrice(r.price, prefix + hrs(it.price), false, unit);
           r.sub.textContent = "";
         }
       } else if (c > 0) {
@@ -1341,8 +1408,8 @@ h2 { font-size: var(--fs-2); }
         if (qc === 2) {
           var diff = it.options[1].price - it.options[0].price;
           subtotal += diff;
-          lines.push([it.name + " (com detalhes, diferença)", diff]);
-          setPrice(r.price, brl(diff));
+          lines.push([it.name + " (" + it.options[1].short + ", diferença)", diff]);
+          setPrice(r.price, hrs(diff));
         } else {
           setPrice(r.price, "Incluído no pacote", true);
         }
@@ -1353,10 +1420,10 @@ h2 { font-size: var(--fs-2); }
         if (q > 0) {
           var o = it.options[q - 1];
           subtotal += o.price;
-          lines.push([it.name + " (" + (q === 1 ? "simples" : "com detalhes") + ")", o.price]);
-          setPrice(r.price, brl(o.price));
+          lines.push([it.name + " (" + o.short + ")", o.price]);
+          setPrice(r.price, hrs(o.price));
         } else {
-          setPrice(r.price, brl(it.options[0].price) + " ou " + brl(it.options[1].price), true);
+          setPrice(r.price, hrs(it.options[0].price) + " ou " + hrs(it.options[1].price), true);
         }
       }
     });
@@ -1367,11 +1434,18 @@ h2 { font-size: var(--fs-2); }
       gr.count.hidden = n === 0;
     });
 
-    var total = subtotal;
+    var hoursMoney = Math.round(subtotal - BASE.price);
+    // A conta das horas fica numa caixa própria, fora da lista do pedido.
+    var hb = document.getElementById("hours-box");
+    hb.hidden = !(hoursMoney > 0);
+    document.getElementById("hb-hours").textContent = hrs(hoursMoney);
+    document.getElementById("hb-rate").textContent = brl(HOUR_RATE);
+    document.getElementById("hb-money").textContent = brl(hoursMoney);
+    var total = Math.round(subtotal);
     if (state[URGENCY.id] > 0) {
       var extra = Math.round(subtotal * URGENCY.rate);
-      total = subtotal + extra;
-      lines.push([URGENCY.name + " +" + Math.round(URGENCY.rate * 100) + "%", extra]);
+      total = total + extra;
+      lines.push([URGENCY.name + " +" + Math.round(URGENCY.rate * 100) + "%", extra, "money"]);
     }
     var entry = Math.round(total * SPLIT_ENTRY);
     var delivery = total - entry;
@@ -1384,7 +1458,8 @@ h2 { font-size: var(--fs-2); }
       if (prevLines && !prevLines[l[0]]) li.className = "new";
       seen[l[0]] = true;
       li.appendChild(el("span", null, l[0]));
-      li.appendChild(el("span", null, brl(l[1])));
+      if (l[3]) li.className = (li.className ? li.className + " " : "") + l[3];
+      li.appendChild(el("span", null, l[2] === "money" ? brl(l[1]) : hrs(l[1])));
       ul.appendChild(li);
     });
     prevLines = seen;
