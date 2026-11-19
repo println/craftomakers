@@ -113,7 +113,17 @@ h2 { font-size: var(--fs-2); }
 .layout { display: grid; gap: var(--s5); grid-template-columns: minmax(0, 1fr); }
 .options { min-width: 0; }
 .step { margin-bottom: var(--s6); }
-.step-head { display: flex; align-items: center; gap: var(--s3); margin-bottom: var(--s4); }
+.step-head { display: flex; flex-wrap: wrap; align-items: center; gap: var(--s3); margin-bottom: var(--s4); }
+/* Zona em horas: os passos 2 e 3 ficam num fundo próprio, com o valor da hora no topo. */
+.hours-zone { background: var(--paper-2); border-radius: var(--r-card); padding: var(--s5); }
+.hours-zone .step:last-child { margin-bottom: 0; }
+.zone-head { display: grid; grid-template-columns: auto 1fr auto; column-gap: var(--s3); align-items: center; padding-bottom: var(--s4); margin-bottom: var(--s5); border-bottom: 1px solid var(--line); }
+.zone-head svg { width: 24px; height: 24px; fill: none; stroke: var(--ink); stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+.zone-rate { font: 400 var(--fs-2)/1.1 var(--text); text-transform: uppercase; letter-spacing: 0.02em; font-variant-numeric: tabular-nums; }
+.zone-head { --zone-brown: #ADA59C; color: var(--zone-brown); }
+.zone-head svg { stroke: var(--zone-brown) !important; }
+.zone-badge { padding: 6px 14px; border-radius: var(--r-pill); background: transparent; border: 2px solid color-mix(in srgb, var(--zone-brown) 55%, transparent); color: var(--zone-brown); font: 400 var(--fs-2)/1 var(--text); white-space: nowrap; font-variant-numeric: tabular-nums; }
+@media (max-width: 480px) { .hours-zone { margin-inline: calc(-1 * var(--s4)); border-radius: 0; padding: var(--s5) var(--s4); } }
 .step-num {
   flex: none;
   width: 32px;
@@ -679,6 +689,13 @@ h2 { font-size: var(--fs-2); }
         </div>
       </section>
 
+      <div class="hours-zone">
+        <div class="zone-head">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+          <strong class="zone-rate">Custo em horas</strong>
+          <span class="zone-badge" data-rate>R$ 80</span>
+        </div>
+
       <section class="step" id="passo-2" aria-labelledby="packs-title">
         <div class="step-head">
           <span class="step-num" aria-hidden="true">2</span>
@@ -694,6 +711,7 @@ h2 { font-size: var(--fs-2); }
         </div>
         <div class="groups" id="groups"></div>
       </section>
+      </div>
     </div>
 
     <aside class="summary panel" id="summary" aria-labelledby="summary-title">
@@ -947,6 +965,7 @@ h2 { font-size: var(--fs-2); }
   // Preço por hora: cada item tem as horas de trabalho; o preço é horas × valor da hora.
   var HOUR_RATE = 80;
   function hoursToMoney(h) { return h * HOUR_RATE; }
+  document.querySelectorAll("[data-rate]").forEach(function (e) { e.textContent = "R$ " + HOUR_RATE; });
   // Mostra horas a partir do valor em dinheiro (valor ÷ valor da hora).
   // Horas no formato hh:mm (ex.: 1,25 h → 01:15).
   function hhmm(h) {
