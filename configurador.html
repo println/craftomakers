@@ -119,10 +119,13 @@ h2 { font-size: var(--fs-2); }
 .hours-zone .step:last-child { margin-bottom: 0; }
 .zone-head { display: grid; grid-template-columns: auto 1fr auto; column-gap: var(--s3); align-items: center; padding-bottom: var(--s4); margin-bottom: var(--s5); border-bottom: 1px solid var(--line); }
 .zone-head svg { width: 24px; height: 24px; fill: none; stroke: var(--ink); stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
-.zone-rate { font: 400 var(--fs-2)/1.1 var(--text); text-transform: uppercase; letter-spacing: 0.02em; font-variant-numeric: tabular-nums; }
-.zone-head { --zone-brown: #FF5A1F; color: var(--zone-brown); }
+.zone-rate { font: 400 var(--fs-2)/1.1 var(--text); text-transform: uppercase; letter-spacing: 0; font-variant-numeric: tabular-nums; }
+.zone-head { position: relative; --zone-brown: #FF5A1F; color: var(--zone-brown); }
 .zone-head svg { stroke: var(--zone-brown) !important; }
-.zone-badge { padding: 6px 14px; border-radius: var(--r-pill); background: transparent; border: 2px solid color-mix(in srgb, var(--zone-brown) 55%, transparent); color: var(--zone-brown); font: 400 var(--fs-2)/1 var(--text); white-space: nowrap; font-variant-numeric: tabular-nums; }
+.zone-badge { padding: 6px 10px; border-radius: var(--r-pill); background: transparent; border: 2px solid color-mix(in srgb, var(--zone-brown) 55%, transparent); color: var(--zone-brown); font: 400 var(--fs-3)/1 var(--text); white-space: nowrap; font-variant-numeric: tabular-nums; }
+.zone-head .pop { left: auto; right: 0; width: min(280px, 100%); }
+.zone-badge { cursor: pointer; }
+.zone-badge[aria-expanded="true"] { background: var(--zone-brown); color: var(--white); }
 @media (max-width: 480px) { .hours-zone { margin-inline: calc(-1 * var(--s4)); border-radius: 0; padding: var(--s5) var(--s4); } }
 .step-num {
   flex: none;
@@ -693,7 +696,7 @@ h2 { font-size: var(--fs-2); }
         <div class="zone-head">
           <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
           <strong class="zone-rate">Custo em horas</strong>
-          <span class="zone-badge" data-rate>R$ 80</span>
+          <button type="button" class="zone-badge" data-rate aria-expanded="false" aria-controls="pop-rate">R$ 80/h</button>
         </div>
 
       <section class="step" id="passo-2" aria-labelledby="packs-title">
@@ -965,7 +968,7 @@ h2 { font-size: var(--fs-2); }
   // Preço por hora: cada item tem as horas de trabalho; o preço é horas × valor da hora.
   var HOUR_RATE = 80;
   function hoursToMoney(h) { return h * HOUR_RATE; }
-  document.querySelectorAll("[data-rate]").forEach(function (e) { e.textContent = "R$ " + HOUR_RATE; });
+  document.querySelectorAll("[data-rate]").forEach(function (e) { e.textContent = "R$ " + HOUR_RATE + "/h"; });
   // Mostra horas a partir do valor em dinheiro (valor ÷ valor da hora).
   // Horas no formato hh:mm (ex.: 1,25 h → 01:15).
   function hhmm(h) {
@@ -1342,6 +1345,27 @@ h2 { font-size: var(--fs-2); }
     });
   }
 
+  function buildRateInfo() {
+    // O próprio badge do valor da hora abre o balão com a descrição.
+    var head = document.querySelector(".zone-head");
+    var btn = head.querySelector(".zone-badge");
+    var pop = el("div", "pop");
+    pop.id = "pop-rate";
+    pop.hidden = true;
+    pop.appendChild(el("p", null, "R$ " + HOUR_RATE + " por hora de trabalho"));
+    head.appendChild(pop);
+    btn.addEventListener("click", function (e) {
+      e.stopPropagation();
+      var wasOpen = openPop && openPop.btn === btn;
+      closePop(false);
+      if (wasOpen) return;
+      pop.hidden = false;
+      btn.setAttribute("aria-expanded", "true");
+      head.classList.add("pop-open");
+      openPop = { btn: btn, pop: pop, card: head };
+    });
+  }
+
   function buildTotalInfo() {
     // O balão fica ancorado na linha do total.
     var box = document.getElementById("total-row");
@@ -1520,6 +1544,7 @@ h2 { font-size: var(--fs-2); }
   buildPacks();
   buildItems();
   buildTotalInfo();
+  buildRateInfo();
   update();
 
   var btn = document.getElementById("toggle-summary");
